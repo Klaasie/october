@@ -3,7 +3,7 @@
 use File;
 use Illuminate\Console\Command;
 use System\Classes\Contracts\PluginManagerContract;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -55,7 +55,9 @@ class PluginRemove extends Command
         /*
          * Rollback plugin
          */
-        $manager = UpdateManager::instance()->setNotesOutput($this->output);
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $manager = $updateManager->setNotesOutput($this->output);
         $manager->rollbackPlugin($pluginName);
 
         /*

@@ -4,7 +4,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Cms\Classes\Theme;
 use Cms\Classes\ThemeManager;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 
 /**
  * Console command to list themes.
@@ -32,7 +32,8 @@ class ThemeList extends Command
     public function handle()
     {
         $themeManager = ThemeManager::instance();
-        $updateManager = UpdateManager::instance();
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
 
         foreach (Theme::all() as $theme) {
             $flag = $theme->isActiveTheme() ? '[*] ' : '[-] ';

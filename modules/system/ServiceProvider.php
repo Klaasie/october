@@ -4,6 +4,7 @@ use App;
 use System\Classes\ComposerManager;
 use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
+use System\Classes\Contracts\UpdateManagerContract;
 use View;
 use Event;
 use Config;
@@ -138,6 +139,7 @@ class ServiceProvider extends ModuleServiceProvider
 
         App::singleton(PluginManagerContract::class, PluginManager::class);
         App::singleton(ComposerManagerContract::class, ComposerManager::class);
+        App::singleton(UpdateManagerContract::class, UpdateManager::class);
     }
 
     /**
@@ -230,7 +232,9 @@ class ServiceProvider extends ModuleServiceProvider
          */
         Event::listen('console.schedule', function ($schedule) {
             // Fix initial system migration with plugins that use settings for scheduling - see #3208
-            if (App::hasDatabase() && !Schema::hasTable(UpdateManager::instance()->getMigrationTableName())) {
+            /** @var UpdateManagerContract $updateManager */
+            $updateManager = resolve(UpdateManagerContract::class);
+            if (App::hasDatabase() && !Schema::hasTable($updateManager->getMigrationTableName())) {
                 return;
             }
 

@@ -4,9 +4,9 @@ use Lang;
 use Config;
 use BackendAuth;
 use System\Classes\Contracts\PluginManagerContract;
+use System\Classes\Contracts\UpdateManagerContract;
 use System\Models\Parameter;
 use System\Models\LogSetting;
-use System\Classes\UpdateManager;
 use Backend\Classes\ReportWidgetBase;
 use System\Models\EventLog;
 use System\Models\RequestLog;
@@ -56,7 +56,8 @@ class Status extends ReportWidgetBase
 
     protected function loadData()
     {
-        $manager = UpdateManager::instance();
+        /** @var UpdateManagerContract $manager */
+        $manager = resolve(UpdateManagerContract::class);
 
         $this->vars['canUpdate'] = BackendAuth::getUser()->hasAccess('system.manage_updates');
         $this->vars['updates']   = $manager->check();

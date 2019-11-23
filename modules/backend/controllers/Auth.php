@@ -4,11 +4,11 @@ use Mail;
 use Flash;
 use Backend;
 use Request;
+use System\Classes\Contracts\UpdateManagerContract;
 use Validator;
 use BackendAuth;
 use Backend\Models\AccessLog;
 use Backend\Classes\Controller;
-use System\Classes\UpdateManager;
 use ApplicationException;
 use ValidationException;
 use Exception;
@@ -96,7 +96,9 @@ class Auth extends Controller
         if ($runMigrationsOnLogin) {
             try {
                 // Load version updates
-                UpdateManager::instance()->update();
+                /** @var UpdateManagerContract $updateManager */
+                $updateManager = resolve(UpdateManagerContract::class);
+                $updateManager->update();
             } catch (Exception $ex) {
                 Flash::error($ex->getMessage());
             }

@@ -7,7 +7,7 @@ use Config;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use System\Classes\CombineAssets;
 use Exception;
 use System\Models\Parameter;
@@ -49,10 +49,16 @@ class OctoberUtil extends Command
     protected $description = 'Utility commands for October';
 
     /**
+     * @var UpdateManagerContract
+     */
+    private $updateManager;
+
+    /**
      * Execute the console command.
      */
     public function handle()
     {
+        $this->updateManager = resolve(UpdateManagerContract::class);
         $command = implode(' ', (array) $this->argument('name'));
         $method = 'util'.studly_case($command);
 
@@ -121,7 +127,7 @@ class OctoberUtil extends Command
         }
 
         try {
-            $build = UpdateManager::instance()->setBuildNumberManually();
+            $build = $this->updateManager->setBuildNumberManually();
             $this->comment('*** October sets build: '.$build);
         }
         catch (Exception $ex) {
@@ -345,8 +351,7 @@ class OctoberUtil extends Command
             return;
         }
 
-        $manager = UpdateManager::instance();
-        $result = $manager->requestProjectDetails($projectId);
+        $result = $this->updateManager->requestProjectDetails($projectId);
 
         Parameter::set([
             'system::project.id'    => $projectId,

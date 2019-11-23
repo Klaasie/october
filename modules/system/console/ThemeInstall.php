@@ -3,7 +3,7 @@
 use File;
 use Cms\Classes\Theme;
 use Cms\Classes\ThemeManager;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Exception;
@@ -55,7 +55,8 @@ class ThemeInstall extends Command
 
         try {
             $themeManager = ThemeManager::instance();
-            $updateManager = UpdateManager::instance();
+            /** @var UpdateManagerContract $updateManager */
+            $updateManager = resolve(UpdateManagerContract::class);
 
             $themeDetails = $updateManager->requestThemeDetails($themeName);
 

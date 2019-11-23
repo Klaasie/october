@@ -1,7 +1,7 @@
 <?php namespace System\Console;
 
 use Illuminate\Console\Command;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -35,7 +35,9 @@ class OctoberDown extends Command
             return;
         }
 
-        UpdateManager::instance()
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $updateManager
             ->setNotesOutput($this->output)
             ->uninstall()
         ;

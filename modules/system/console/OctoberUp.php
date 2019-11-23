@@ -1,7 +1,7 @@
 <?php namespace System\Console;
 
 use Illuminate\Console\Command;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 
 /**
  * Console command to migrate the database.
@@ -30,7 +30,9 @@ class OctoberUp extends Command
     {
         $this->output->writeln('<info>Migrating application and plugins...</info>');
 
-        UpdateManager::instance()
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $updateManager
             ->setNotesOutput($this->output)
             ->update()
         ;
