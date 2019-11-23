@@ -1,8 +1,8 @@
 <?php
 
 use Backend\Classes\AuthManager;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\UpdateManager;
-use System\Classes\PluginManager;
 use October\Rain\Database\Model as ActiveRecord;
 use October\Tests\Concerns\InteractsWithAuthentication;
 
@@ -72,7 +72,7 @@ abstract class PluginTestCase extends TestCase
         /*
          * Force reload of October singletons
          */
-        PluginManager::forgetInstance();
+        App::forgetInstance(PluginManagerContract::class);
         UpdateManager::forgetInstance();
 
         /*
@@ -136,7 +136,8 @@ abstract class PluginTestCase extends TestCase
             throw new Exception(sprintf('Invalid plugin code: "%s"', $code));
         }
 
-        $manager = PluginManager::instance();
+        /** @var PluginManagerContract $manager */
+        $manager = resolve(PluginManagerContract::class);
         $plugin = $manager->findByIdentifier($code);
 
         /*

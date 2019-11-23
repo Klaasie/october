@@ -52,9 +52,9 @@ The test class should extend the base class `PluginTestCase` and this is a speci
     php artisan plugin:refresh Acme.Blog
     [php artisan plugin:refresh <dependency>, ...]
 
-> **Note:** If your plugin uses [configuration files](../plugin/settings#file-configuration), then you will need to run `System\Classes\PluginManager::instance()->registerAll(true);` in the `setUp` method of your tests. Below is an example of a base test case class that should be used if you need to test your plugin working with other plugins instead of in isolation.
+> **Note:** If your plugin uses [configuration files](../plugin/settings#file-configuration), then you will need to resolve and run `$pluginManager->registerAll(true);` in the `setUp` method of your tests. Below is an example of a base test case class that should be used if you need to test your plugin working with other plugins instead of in isolation.
 
-    use System\Classes\PluginManager;
+    use System\Classes\Contracts\PluginManagerContract;
 
     class BaseTestCase extends PluginTestCase
     {
@@ -63,7 +63,7 @@ The test class should extend the base class `PluginTestCase` and this is a speci
             parent::setUp();
 
             // Get the plugin manager
-            $pluginManager = PluginManager::instance();
+            $pluginManager = resolve(PluginManagerContract::class);
 
             // Register the plugins to make features like file configuration available
             $pluginManager->registerAll(true);
@@ -77,7 +77,7 @@ The test class should extend the base class `PluginTestCase` and this is a speci
             parent::tearDown();
 
             // Get the plugin manager
-            $pluginManager = PluginManager::instance();
+            $pluginManager = resolve(PluginManagerContract::class);
 
             // Ensure that plugins are registered again for the next test
             $pluginManager->unregisterAll();

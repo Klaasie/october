@@ -2,6 +2,7 @@
 
 use Lang;
 use Html;
+use System\Classes\Contracts\PluginManagerContract;
 use Yaml;
 use File;
 use Flash;
@@ -15,7 +16,6 @@ use Backend\Classes\Controller;
 use System\Models\Parameter;
 use System\Models\PluginVersion;
 use System\Classes\UpdateManager;
-use System\Classes\PluginManager;
 use System\Classes\SettingsManager;
 use ApplicationException;
 use Exception;
@@ -50,11 +50,18 @@ class Updates extends Controller
     public $requiredPermissions = ['system.manage_updates'];
 
     /**
+     * @var PluginManagerContract
+     */
+    private $pluginManager;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         parent::__construct();
+
+        $this->pluginManager = resolve(PluginManagerContract::class);
 
         $this->addJs('/modules/system/assets/js/updates/updates.js', 'core');
         $this->addCss('/modules/system/assets/css/updates/updates.css', 'core');
@@ -87,7 +94,7 @@ class Updates extends Controller
     public function manage()
     {
         $this->pageTitle = 'system::lang.plugins.manage';
-        PluginManager::instance()->clearDisabledCache();
+        $this->pluginManager->clearDisabledCache();
         return $this->asExtension('ListController')->index();
     }
 
@@ -133,10 +140,9 @@ class Updates extends Controller
             /*
              * Lookup the plugin
              */
-            $manager = PluginManager::instance();
-            $plugin = $manager->findByIdentifier($code);
-            $code = $manager->getIdentifier($plugin);
-            $path = $manager->getPluginPath($plugin);
+            $plugin = $this->pluginManager->findByIdentifier($code);
+            $code = $this->pluginManager->getIdentifier($plugin);
+            $path = $this->pluginManager->getPluginPath($plugin);
 
             if ($path && $plugin) {
                 $details = $plugin->pluginDetails();
@@ -789,7 +795,7 @@ class Updates extends Controller
     public function onRemovePlugin()
     {
         if ($pluginCode = post('code')) {
-            PluginManager::instance()->deletePlugin($pluginCode);
+            $this->pluginManager->deletePlugin($pluginCode);
             Flash::success(Lang::get('system::lang.plugins.remove_success'));
         }
 
@@ -807,8 +813,6 @@ class Updates extends Controller
             is_array($checkedIds) &&
             count($checkedIds)
         ) {
-            $manager = PluginManager::instance();
-
             foreach ($checkedIds as $pluginId) {
                 if (!$plugin = PluginVersion::find($pluginId)) {
                     continue;
@@ -829,25 +833,25 @@ class Updates extends Controller
                     // Disables plugin on the system.
                     case 'disable':
                         $plugin->is_disabled = 1;
-                        $manager->disablePlugin($plugin->code, true);
+                        $this->pluginManager->disablePlugin($plugin->code, true);
                         break;
 
                     // Enables plugin on the system.
                     case 'enable':
                         $plugin->is_disabled = 0;
-                        $manager->enablePlugin($plugin->code, true);
+                        $this->pluginManager->enablePlugin($plugin->code, true);
                         break;
 
                     // Rebuilds plugin database migrations.
                     case 'refresh':
                         $savePlugin = false;
-                        $manager->refreshPlugin($plugin->code);
+                        $this->pluginManager->refreshPlugin($plugin->code);
                         break;
 
                     // Rollback and remove plugins from the system.
                     case 'remove':
                         $savePlugin = false;
-                        $manager->deletePlugin($plugin->code);
+                        $this->pluginManager->deletePlugin($plugin->code);
                         break;
                 }
 
@@ -1032,7 +1036,7 @@ class Updates extends Controller
             if (
                 ($name = array_get($plugin, 'code')) &&
                 ($hash = array_get($plugin, 'hash')) &&
-                !PluginManager::instance()->hasPlugin($name)
+                !$this->pluginManager->hasPlugin($name)
             ) {
                 $plugins[$name] = $hash;
             }

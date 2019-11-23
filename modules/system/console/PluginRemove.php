@@ -2,8 +2,8 @@
 
 use File;
 use Illuminate\Console\Command;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\UpdateManager;
-use System\Classes\PluginManager;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -39,7 +39,8 @@ class PluginRemove extends Command
      */
     public function handle()
     {
-        $pluginManager = PluginManager::instance();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
         $pluginName = $this->argument('name');
         $pluginName = $pluginManager->normalizeIdentifier($pluginName);
 

@@ -2,7 +2,7 @@
 
 use Event;
 use BackendAuth;
-use System\Classes\PluginManager;
+use System\Classes\Contracts\PluginManagerContract;
 use Validator;
 use SystemException;
 use Log;
@@ -61,7 +61,7 @@ class NavigationManager
     ];
 
     /**
-     * @var System\Classes\PluginManager
+     * @var PluginManagerContract
      */
     protected $pluginManager;
 
@@ -70,7 +70,7 @@ class NavigationManager
      */
     protected function init()
     {
-        $this->pluginManager = PluginManager::instance();
+        $this->pluginManager = resolve(PluginManagerContract::class);
     }
 
     /**

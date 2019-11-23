@@ -2,8 +2,8 @@
 
 use Str;
 use BackendAuth;
+use System\Classes\Contracts\PluginManagerContract;
 use SystemException;
-use System\Classes\PluginManager;
 use Event;
 
 /**
@@ -42,7 +42,7 @@ class WidgetManager
     protected $reportWidgetCallbacks = [];
 
     /**
-     * @var System\Classes\PluginManager
+     * @var PluginManagerContract
      */
     protected $pluginManager;
 
@@ -51,7 +51,7 @@ class WidgetManager
      */
     protected function init()
     {
-        $this->pluginManager = PluginManager::instance();
+        $this->pluginManager = resolve(PluginManagerContract::class);
     }
 
     //

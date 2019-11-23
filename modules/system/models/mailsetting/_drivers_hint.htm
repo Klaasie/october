@@ -1,4 +1,7 @@
-<?php if (!System\Classes\PluginManager::instance()->hasPlugin('October.Drivers')): ?>
+<?php
+    $pluginManager = resolve(System\Classes\Contracts\PluginManagerContract::class);
+    if (!$pluginManager->hasPlugin('October.Drivers')):
+?>
     <div class="callout callout-warning fade in no-subheader">
         <div class="header">
             <i class="icon-exclamation-circle"></i>

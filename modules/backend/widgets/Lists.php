@@ -8,8 +8,8 @@ use DbDongle;
 use Carbon\Carbon;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Router\Helper as RouterHelper;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Helpers\DateTime as DateTimeHelper;
-use System\Classes\PluginManager;
 use Backend\Classes\ListColumn;
 use Backend\Classes\WidgetBase;
 use October\Rain\Database\Model;
@@ -1148,7 +1148,9 @@ class Lists extends WidgetBase
      */
     protected function evalCustomListType($type, $record, $column, $value)
     {
-        $plugins = PluginManager::instance()->getRegistrationMethodValues('registerListColumnTypes');
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
+        $plugins = $pluginManager->getRegistrationMethodValues('registerListColumnTypes');
 
         foreach ($plugins as $availableTypes) {
             if (!isset($availableTypes[$type])) {

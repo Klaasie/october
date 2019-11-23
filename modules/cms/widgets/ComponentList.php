@@ -4,7 +4,7 @@ use App;
 use Str;
 use Lang;
 use Input;
-use System\Classes\PluginManager;
+use System\Classes\Contracts\PluginManagerContract;
 use Cms\Classes\ComponentHelpers;
 use Backend\Classes\WidgetBase;
 
@@ -22,9 +22,15 @@ class ComponentList extends WidgetBase
 
     protected $pluginComponentList;
 
+    /**
+     * @var PluginManagerContract
+     */
+    private $pluginManager;
+
     public function __construct($controller, $alias)
     {
         $this->alias = $alias;
+        $this->pluginManager = resolve(PluginManagerContract::class);
 
         parent::__construct($controller, []);
         $this->bindToController();
@@ -64,8 +70,7 @@ class ComponentList extends WidgetBase
             $searchWords = explode(' ', $searchTerm);
         }
 
-        $pluginManager = PluginManager::instance();
-        $plugins = $pluginManager->getPlugins();
+        $plugins = $this->pluginManager->getPlugins();
 
         $this->prepareComponentList();
 
@@ -148,8 +153,7 @@ class ComponentList extends WidgetBase
 
     protected function prepareComponentList()
     {
-        $pluginManager = PluginManager::instance();
-        $plugins = $pluginManager->getPlugins();
+        $plugins = $this->pluginManager->getPlugins();
 
         $componentList = [];
         foreach ($plugins as $plugin) {

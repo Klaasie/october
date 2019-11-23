@@ -1,6 +1,7 @@
 <?php namespace System\Classes;
 
 use App;
+use System\Classes\Contracts\PluginManagerContract;
 use Url;
 use File;
 use Lang;
@@ -50,7 +51,7 @@ class UpdateManager
     protected $tempDirectory;
 
     /**
-     * @var System\Classes\PluginManager
+     * @var PluginManagerContract
      */
     protected $pluginManager;
 
@@ -99,7 +100,7 @@ class UpdateManager
      */
     protected function init()
     {
-        $this->pluginManager = PluginManager::instance();
+        $this->pluginManager = resolve(PluginManagerContract::class);
         $this->themeManager = class_exists(ThemeManager::class) ? ThemeManager::instance() : null;
         $this->versionManager = VersionManager::instance();
         $this->tempDirectory = temp_path();

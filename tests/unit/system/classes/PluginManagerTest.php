@@ -1,5 +1,6 @@
 <?php
-use System\Classes\PluginManager;
+
+use System\Classes\Contracts\PluginManagerContract;
 
 class PluginManagerTest extends TestCase
 {
@@ -9,7 +10,7 @@ class PluginManagerTest extends TestCase
     {
         parent::setUp();
 
-        $manager = PluginManager::instance();
+        $manager = resolve(PluginManagerContract::class);
         self::callProtectedMethod($manager, 'loadDisabled');
         $manager->loadPlugins();
         self::callProtectedMethod($manager, 'loadDependencies');

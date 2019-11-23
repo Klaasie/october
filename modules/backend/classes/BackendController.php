@@ -3,6 +3,7 @@
 use Str;
 use App;
 use File;
+use System\Classes\Contracts\PluginManagerContract;
 use View;
 use Event;
 use Config;
@@ -10,7 +11,6 @@ use Request;
 use Response;
 use Illuminate\Routing\Controller as ControllerBase;
 use October\Rain\Router\Helper as RouterHelper;
-use System\Classes\PluginManager;
 use Closure;
 
 /**
@@ -212,8 +212,11 @@ class BackendController extends ControllerBase
         if (count($params) >= 2) {
             list($author, $plugin) = $params;
 
+            /** @var PluginManagerContract $pluginManager */
+            $pluginManager = resolve(PluginManagerContract::class);
+
             $pluginCode = ucfirst($author) . '.' . ucfirst($plugin);
-            if (PluginManager::instance()->isDisabled($pluginCode)) {
+            if ($pluginManager->isDisabled($pluginCode)) {
                 return Response::make(View::make('backend::404'), 404);
             }
 

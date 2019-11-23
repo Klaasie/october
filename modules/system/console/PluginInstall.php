@@ -1,9 +1,9 @@
 <?php namespace System\Console;
 
 use Illuminate\Console\Command;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\UpdateManager;
 use Symfony\Component\Console\Input\InputArgument;
-use System\Classes\PluginManager;
 
 /**
  * Console command to install a new plugin.
@@ -52,7 +52,9 @@ class PluginInstall extends Command
          * Migrate plugin
          */
         $this->output->writeln(sprintf('<info>Migrating plugin...</info>', $code));
-        PluginManager::instance()->loadPlugins();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
+        $pluginManager->loadPlugins();
         $manager->updatePlugin($code);
     }
 
