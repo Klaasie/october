@@ -1,6 +1,8 @@
 <?php namespace System;
 
 use App;
+use System\Classes\ComposerManager;
+use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use View;
 use Event;
@@ -135,6 +137,7 @@ class ServiceProvider extends ModuleServiceProvider
         });
 
         App::singleton(PluginManagerContract::class, PluginManager::class);
+        App::singleton(ComposerManagerContract::class, ComposerManager::class);
     }
 
     /**

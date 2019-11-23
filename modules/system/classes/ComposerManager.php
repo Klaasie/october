@@ -1,5 +1,8 @@
 <?php namespace System\Classes;
 
+use Composer\Autoload\ClassLoader;
+use System\Classes\Contracts\ComposerManagerContract;
+
 /**
  * Composer manager
  *
@@ -11,29 +14,55 @@
  * @package october\system
  * @author Alexey Bobkov, Samuel Georges
  */
-class ComposerManager
+class ComposerManager implements ComposerManagerContract
 {
-    use \October\Rain\Support\Traits\Singleton;
-
+    /**
+     * @var array
+     */
     protected $namespacePool = [];
 
+    /**
+     * @var array
+     */
     protected $psr4Pool = [];
 
+    /**
+     * @var array
+     */
     protected $classMapPool = [];
 
+    /**
+     * @var array
+     */
     protected $includeFilesPool = [];
 
     /**
-     * @var Composer\Autoload\ClassLoader The primary composer instance.
+     * @var ClassLoader The primary composer instance.
      */
     protected $loader;
 
-    public function init()
+    /**
+     * ComposerManager constructor.
+     */
+    public function __construct()
     {
         $this->loader = include base_path() .'/vendor/autoload.php';
         $this->preloadPools();
     }
 
+    /**
+     * Create a new instance of this singleton.
+     */
+    public static function instance(): ComposerManagerContract
+    {
+        return resolve(self::class);
+    }
+
+    /**
+     * Preload Pools
+     *
+     * @return void
+     */
     protected function preloadPools()
     {
         $this->classMapPool = array_fill_keys(array_keys($this->loader->getClassMap()), true);
@@ -42,7 +71,12 @@ class ComposerManager
         $this->includeFilesPool = $this->preloadIncludeFilesPool();
     }
 
-    protected function preloadIncludeFilesPool()
+    /**
+     * Preload include files pool
+     *
+     * @return array
+     */
+    protected function preloadIncludeFilesPool(): array
     {
         $result = [];
         $vendorPath = base_path() .'/vendor';
@@ -59,9 +93,7 @@ class ComposerManager
     }
 
     /**
-     * Similar function to including vendor/autoload.php.
-     * @param string $vendorPath Absoulte path to the vendor directory.
-     * @return void
+     * {@inheritDoc}
      */
     public function autoload($vendorPath)
     {
@@ -113,10 +145,12 @@ class ComposerManager
 
     /**
      * Removes the vendor directory from a path.
+     *
      * @param string $path
+     * @param $vendorDir
      * @return string
      */
-    protected function stripVendorDir($path, $vendorDir)
+    protected function stripVendorDir($path, $vendorDir): string
     {
         $path = realpath($path);
         $vendorDir = realpath($vendorDir);
