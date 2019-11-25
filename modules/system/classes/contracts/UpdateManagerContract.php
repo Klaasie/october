@@ -13,13 +13,6 @@ use System\Classes\UpdateManager;
 interface UpdateManagerContract
 {
     /**
-     * @return self
-     * @deprecated V1.0.xxx Instead of using this method,
-     *                      rework your logic to resolve the class through dependency injection.
-     */
-    public static function instance(): self;
-
-    /**
      * Creates the migration table and updates
      *
      * @return self
