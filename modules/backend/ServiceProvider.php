@@ -5,8 +5,8 @@ use Backend;
 use BackendMenu;
 use BackendAuth;
 use Backend\Classes\WidgetManager;
+use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\MailManagerContract;
-use System\Classes\CombineAssets;
 use System\Classes\SettingsManager;
 use October\Rain\Support\ModuleServiceProvider;
 
@@ -64,29 +64,29 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerAssetBundles()
     {
-        CombineAssets::registerCallback(function ($combiner) {
-            $combiner->registerBundle('~/modules/backend/assets/less/october.less');
-            $combiner->registerBundle('~/modules/backend/assets/js/october.js');
-            $combiner->registerBundle('~/modules/backend/widgets/table/assets/js/build.js');
-            $combiner->registerBundle('~/modules/backend/widgets/mediamanager/assets/js/mediamanager-browser.js');
-            $combiner->registerBundle('~/modules/backend/widgets/mediamanager/assets/less/mediamanager.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/codeeditor/assets/less/codeeditor.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/repeater/assets/less/repeater.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/codeeditor/assets/js/build.js');
-            $combiner->registerBundle('~/modules/backend/formwidgets/fileupload/assets/less/fileupload.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/nestedform/assets/less/nestedform.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/js/build-plugins.js');
-            $combiner->registerBundle('~/modules/backend/formwidgets/colorpicker/assets/less/colorpicker.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/permissioneditor/assets/less/permissioneditor.less');
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
+        $combiner->registerBundle('~/modules/backend/assets/less/october.less');
+        $combiner->registerBundle('~/modules/backend/assets/js/october.js');
+        $combiner->registerBundle('~/modules/backend/widgets/table/assets/js/build.js');
+        $combiner->registerBundle('~/modules/backend/widgets/mediamanager/assets/js/mediamanager-browser.js');
+        $combiner->registerBundle('~/modules/backend/widgets/mediamanager/assets/less/mediamanager.less');
+        $combiner->registerBundle('~/modules/backend/formwidgets/codeeditor/assets/less/codeeditor.less');
+        $combiner->registerBundle('~/modules/backend/formwidgets/repeater/assets/less/repeater.less');
+        $combiner->registerBundle('~/modules/backend/formwidgets/codeeditor/assets/js/build.js');
+        $combiner->registerBundle('~/modules/backend/formwidgets/fileupload/assets/less/fileupload.less');
+        $combiner->registerBundle('~/modules/backend/formwidgets/nestedform/assets/less/nestedform.less');
+        $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/js/build-plugins.js');
+        $combiner->registerBundle('~/modules/backend/formwidgets/colorpicker/assets/less/colorpicker.less');
+        $combiner->registerBundle('~/modules/backend/formwidgets/permissioneditor/assets/less/permissioneditor.less');
 
-            /*
-             * Rich Editor is protected by DRM
-             */
-            if (file_exists(base_path('modules/backend/formwidgets/richeditor/assets/vendor/froala_drm'))) {
-                $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/less/richeditor.less');
-                $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/js/build.js');
-            }
-        });
+        /*
+         * Rich Editor is protected by DRM
+         */
+        if (file_exists(base_path('modules/backend/formwidgets/richeditor/assets/vendor/froala_drm'))) {
+            $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/less/richeditor.less');
+            $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/js/build.js');
+        }
     }
 
     /*

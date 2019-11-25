@@ -3,6 +3,7 @@
 use File;
 use Cms\Classes\ComponentBase;
 use System\Classes\CombineAssets;
+use System\Classes\Contracts\CombineAssetsContract;
 
 /**
  * Resources component
@@ -120,20 +121,23 @@ class Resources extends ComponentBase
             $css += array_map([$this, 'prefixCss'], (array) $assets);
         }
 
+        /** @var CombineAssetsContract $combineAssets */
+        $combineAssets = resolve(CombineAssetsContract::class);
+
         if (count($js)) {
-            $this->addJs(CombineAssets::combine($js, $this->assetPath));
+            $this->addJs($combineAssets->prepareRequest($js, $this->assetPath));
         }
 
         if (count($less)) {
-            $this->addCss(CombineAssets::combine($less, $this->assetPath));
+            $this->addCss($combineAssets->prepareRequest($less, $this->assetPath));
         }
 
         if (count($sass)) {
-            $this->addCss(CombineAssets::combine($sass, $this->assetPath));
+            $this->addCss($combineAssets->prepareRequest($sass, $this->assetPath));
         }
 
         if (count($css)) {
-            $this->addCss(CombineAssets::combine($css, $this->assetPath));
+            $this->addCss($combineAssets->prepareRequest($css, $this->assetPath));
         }
 
         /*

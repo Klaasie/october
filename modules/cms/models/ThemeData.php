@@ -3,8 +3,8 @@
 use Lang;
 use Model;
 use Cms\Classes\Theme as CmsTheme;
-use System\Classes\CombineAssets;
 use Exception;
+use System\Classes\Contracts\CombineAssetsContract;
 use System\Models\File;
 
 /**
@@ -75,7 +75,9 @@ class ThemeData extends Model
     public function afterSave()
     {
         try {
-            CombineAssets::resetCache();
+            /** @var CombineAssetsContract $combineAssets */
+            $combineAssets = resolve(CombineAssetsContract::class);
+            $combineAssets->forgetCache();
         }
         catch (Exception $ex) {
         }

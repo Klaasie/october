@@ -247,19 +247,42 @@ class CombineAssets implements CombineAssetsContract
     }
 
     /**
-     * {@inheritDoc}
+     * Static combine method
+     * Kept this one to remain backwards compatible.
+     *
+     * @deprecated V1.0.xxx Instead of using this method,
+     *             rework your logic to resolve the class through dependency injection.
      */
-    public static function instance(): CombineAssetsContract
+    public static function instance(): CombineAssets
     {
         return resolve(self::class);
     }
 
-     /**
-     * {@inheritDoc}
+    /**
+     * Combines JavaScript or StyleSheet file references
+     * to produce a page relative URL to the combined contents.
+     *
+     *     $assets = [
+     *         'assets/vendor/mustache/mustache.js',
+     *         'assets/js/vendor/jquery.ui.widget.js',
+     *         'assets/js/vendor/canvas-to-blob.js',
+     *     ];
+     *
+     *     CombineAssets::combine($assets, base_path('plugins/acme/blog'));
+     *
+     * Kept this one to remain backwards compatible.
+     *
+     * @param array $assets Collection of assets
+     * @param string $localPath Prefix all assets with this path (optional)
+     * @return string URL to contents.
+     * @deprecated V1.0.xxx Instead of using this method,
+     *             rework your logic to resolve the class through dependency injection.
      */
     public static function combine($assets = [], $localPath = null): string
     {
-        return resolve(self::class)->prepareRequest($assets, $localPath);
+        /** @var CombineAssetsContract $combineAssets */
+        $combineAssets = resolve(self::class);
+        return $combineAssets->prepareRequest($assets, $localPath);
     }
 
     /**
@@ -417,13 +440,9 @@ class CombineAssets implements CombineAssetsContract
     }
 
     /**
-     * Combines asset file references of a single type to produce a URL reference to the combined contents.
-     *
-     * @param array $assets List of asset files.
-     * @param string $localPath File extension, used for aesthetic purposes only.
-     * @return string URL to contents.
+     * {@inheritDoc}
      */
-    protected function prepareRequest(array $assets, $localPath = null): string
+    public function prepareRequest(array $assets, $localPath = null): string
     {
         if (substr($localPath, -1) !== '/') {
             $localPath .= '/';
@@ -613,7 +632,21 @@ class CombineAssets implements CombineAssetsContract
     //
 
     /**
-     * {@inheritDoc}
+     * Registers a callback function that defines bundles.
+     * The callback function should register bundles by calling the manager's
+     * `registerBundle` method. This instance is passed to the callback
+     * function as an argument. Usage:
+     *
+     *     CombineAssets::registerCallback(function ($combiner) {
+     *         $combiner->registerBundle('~/modules/backend/assets/less/october.less');
+     *     });
+     *
+     * Kept this one to remain backwards compatible.
+     *
+     * @param callable $callback A callable function.
+     * @return void
+     * @deprecated V1.0.xxx Instead of using this method,
+     *             rework your logic to resolve the class through dependency injection.
      */
     public static function registerCallback(callable $callback)
     {
@@ -869,19 +902,34 @@ class CombineAssets implements CombineAssetsContract
     /**
      * Resets the combiner cache
      *
+     * Kept this one to remain backwards compatible.
+     *
      * @return void
+     * @deprecated V1.0.xxx Instead of using this method,
+     *             rework your logic to resolve the class through dependency injection.
      */
     public static function resetCache()
     {
+        /** @var CombineAssetsContract $self */
         $self = resolve(self::class);
-        if ($self->has('combiner.index')) {
-            $index = (array) @unserialize(@base64_decode($self->get('combiner.index'))) ?: [];
+        $self->forgetCache();
+    }
+
+    /**
+     * Resets the combiner cache
+     *
+     * @return void
+     */
+    public function forgetCache()
+    {
+        if ($this->cache->has('combiner.index')) {
+            $index = (array) @unserialize(@base64_decode($this->cache->get('combiner.index'))) ?: [];
 
             foreach ($index as $cacheKey) {
-                $self->forget($cacheKey);
+                $this->cache->forget($cacheKey);
             }
 
-            $self->forget('combiner.index');
+            $this->cache->forget('combiner.index');
         }
 
         CacheHelper::instance()->clearCombiner();

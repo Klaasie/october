@@ -1,6 +1,7 @@
 <?php namespace Cms\Classes;
 
 use Cms;
+use System\Classes\Contracts\CombineAssetsContract;
 use Url;
 use App;
 use View;
@@ -20,7 +21,6 @@ use Cms\Twig\Extension as CmsTwigExtension;
 use Cms\Models\MaintenanceSetting;
 use System\Models\RequestLog;
 use System\Helpers\View as ViewHelper;
-use System\Classes\CombineAssets;
 use System\Twig\Extension as SystemTwigExtension;
 use October\Rain\Exception\AjaxException;
 use October\Rain\Exception\ValidationException;
@@ -1385,7 +1385,9 @@ class Controller
         $themeDir = $this->getTheme()->getDirName();
 
         if (is_array($url)) {
-            $_url = Url::to(CombineAssets::combine($url, themes_path().'/'.$themeDir));
+            /** @var CombineAssetsContract $combineAssets */
+            $combineAssets = resolve(CombineAssetsContract::class);
+            $_url = Url::to($combineAssets->prepareRequest($url, themes_path().'/'.$themeDir));
         }
         else {
             $_url = Config::get('cms.themesPath', '/themes').'/'.$themeDir;

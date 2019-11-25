@@ -1,7 +1,6 @@
 <?php
 
 use Cms\Classes\Theme;
-use System\Classes\CombineAssets;
 use System\Classes\Contracts\CombineAssetsContract;
 
 class CombineAssetsTest extends TestCase
@@ -10,7 +9,9 @@ class CombineAssetsTest extends TestCase
     {
         parent::setUp();
 
-        CombineAssets::resetCache();
+        /** @var CombineAssetsContract $combineAssets */
+        $combineAssets = resolve(CombineAssetsContract::class);
+        $combineAssets->forgetCache();
     }
 
     //
@@ -43,7 +44,7 @@ class CombineAssetsTest extends TestCase
         /** @var CombineAssetsContract $combiner */
         $combiner = resolve(CombineAssetsContract::class);
 
-        $url = $combiner->combine(
+        $url = $combiner->prepareRequest(
             [
                 'assets/css/style1.css',
                 'assets/css/style2.css'
@@ -53,7 +54,7 @@ class CombineAssetsTest extends TestCase
         $this->assertNotNull($url);
         $this->assertRegExp('/\w+[-]\d+/i', $url); // Must contain hash-number
 
-        $url = $combiner->combine(
+        $url = $combiner->prepareRequest(
             [
                 'assets/js/script1.js',
                 'assets/js/script2.js'
@@ -106,6 +107,6 @@ class CombineAssetsTest extends TestCase
     {
         /** @var CombineAssetsContract $combiner */
         $combiner = resolve(CombineAssetsContract::class);
-        $this->assertNull($combiner->resetCache());
+        $this->assertNull($combiner->forgetCache());
     }
 }
