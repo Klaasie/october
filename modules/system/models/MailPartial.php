@@ -1,8 +1,8 @@
 <?php namespace System\Models;
 
+use System\Classes\Contracts\MailManagerContract;
 use View;
 use Model;
-use System\Classes\MailManager;
 use October\Rain\Mail\MailParser;
 use ApplicationException;
 use Exception;
@@ -74,7 +74,9 @@ class MailPartial extends Model
     {
         $dbPartials = self::lists('code', 'code');
 
-        $definitions = MailManager::instance()->listRegisteredPartials();
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $definitions = $mailManager->listRegisteredPartials();
         foreach ($definitions as $code => $path) {
             if (array_key_exists($code, $dbPartials)) {
                 continue;
@@ -90,7 +92,9 @@ class MailPartial extends Model
 
     public function fillFromCode($code = null)
     {
-        $definitions = MailManager::instance()->listRegisteredPartials();
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $definitions = $mailManager->listRegisteredPartials();
 
         if ($code === null) {
             $code = $this->code;

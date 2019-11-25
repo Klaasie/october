@@ -1,8 +1,8 @@
 <?php namespace System\Models;
 
+use System\Classes\Contracts\MailManagerContract;
 use View;
 use Model;
-use System\Classes\MailManager;
 use October\Rain\Mail\MailParser;
 use ApplicationException;
 use File as FileHelper;
@@ -80,7 +80,9 @@ class MailLayout extends Model
     {
         $dbLayouts = self::lists('code', 'code');
 
-        $definitions = MailManager::instance()->listRegisteredLayouts();
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $definitions = $mailManager->listRegisteredLayouts();
         foreach ($definitions as $code => $path) {
             if (array_key_exists($code, $dbLayouts)) {
                 continue;
@@ -96,7 +98,9 @@ class MailLayout extends Model
 
     public function fillFromCode($code = null)
     {
-        $definitions = MailManager::instance()->listRegisteredLayouts();
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $definitions = $mailManager->listRegisteredLayouts();
 
         if ($code === null) {
             $code = $this->code;
