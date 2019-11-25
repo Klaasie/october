@@ -1,10 +1,10 @@
 <?php
 
+use System\Classes\Contracts\VersionManagerContract;
 use System\Classes\VersionManager;
 
 class VersionManagerTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -20,7 +20,8 @@ class VersionManagerTest extends TestCase
 
     public function testGetLatestFileVersion()
     {
-        $manager = VersionManager::instance();
+        /** @var VersionManagerContract $manager */
+        $manager =  resolve(VersionManagerContract::class);
         $result = self::callProtectedMethod($manager, 'getLatestFileVersion', ['\October\\Tester']);
 
         $this->assertNotNull($result);
@@ -29,7 +30,8 @@ class VersionManagerTest extends TestCase
 
     public function testGetFileVersions()
     {
-        $manager = VersionManager::instance();
+        /** @var VersionManagerContract $manager */
+        $manager = resolve(VersionManagerContract::class);
         $result = self::callProtectedMethod($manager, 'getFileVersions', ['\October\\Tester']);
 
         $this->assertCount(5, $result);
@@ -67,7 +69,8 @@ class VersionManagerTest extends TestCase
 
     public function testGetNewFileVersions()
     {
-        $manager = VersionManager::instance();
+        /** @var VersionManagerContract $manager */
+        $manager = resolve(VersionManagerContract::class);
         $result = self::callProtectedMethod($manager, 'getNewFileVersions', ['\October\\Tester', '1.0.3']);
 
         $this->assertCount(2, $result);
@@ -97,7 +100,8 @@ class VersionManagerTest extends TestCase
      */
     public function testExtractScriptsAndComments($versionInfo, $expectedComments, $expectedScripts)
     {
-        $manager = VersionManager::instance();
+        /** @var VersionManagerContract $manager */
+        $manager = resolve(VersionManagerContract::class);
         list($comments, $scripts) = self::callProtectedMethod($manager, 'extractScriptsAndComments', [$versionInfo]);
 
         $this->assertInternalType('array', $comments);

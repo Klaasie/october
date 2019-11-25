@@ -5,6 +5,8 @@ use System\Classes\ComposerManager;
 use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\Contracts\UpdateManagerContract;
+use System\Classes\Contracts\VersionManagerContract;
+use System\Classes\VersionManager;
 use View;
 use Event;
 use Config;
@@ -140,6 +142,7 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton(PluginManagerContract::class, PluginManager::class);
         App::singleton(ComposerManagerContract::class, ComposerManager::class);
         App::singleton(UpdateManagerContract::class, UpdateManager::class);
+        App::singleton(VersionManagerContract::class, VersionManager::class);
     }
 
     /**
