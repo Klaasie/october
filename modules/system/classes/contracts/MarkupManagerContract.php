@@ -10,13 +10,6 @@ use Closure;
 interface MarkupManagerContract
 {
     /**
-     * @return self
-     * @deprecated V1.0.xxx Instead of using this method,
-     *                      rework your logic to resolve the class through dependency injection.
-     */
-    public static function instance(): self;
-
-    /**
      * Registers a callback function that defines simple Twig extensions.
      * The callback function should register menu items by calling the manager's
      * `registerFunctions`, `registerFilters`, `registerTokenParsers` function.
