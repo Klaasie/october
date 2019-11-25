@@ -4,6 +4,7 @@ use Lang;
 use Flash;
 use Backend;
 use BackendMenu;
+use System\Classes\Contracts\SettingsManagerContract;
 use System\Classes\SettingsManager;
 use Backend\Classes\Controller;
 use ApplicationException;
@@ -29,11 +30,18 @@ class Settings extends Controller
     public $requiredPermissions = [];
 
     /**
+     * @var SettingsManagerContract
+     */
+    private $settingsManager;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         parent::__construct();
+
+        $this->settingsManager = resolve(SettingsManagerContract::class);
 
         if ($this->action == 'backend_preferences') {
             $this->requiredPermissions = ['backend.manage_preferences'];
@@ -47,7 +55,7 @@ class Settings extends Controller
     public function index()
     {
         $this->pageTitle = 'system::lang.settings.menu_label';
-        $this->vars['items'] = SettingsManager::instance()->listItems('system');
+        $this->vars['items'] = $this->settingsManager->listItems('system');
         $this->bodyClass = 'compact-container sidenav-tree-root';
     }
 
@@ -55,7 +63,7 @@ class Settings extends Controller
     {
         BackendMenu::setContextSideMenu('mysettings');
         $this->pageTitle = 'backend::lang.mysettings.menu_label';
-        $this->vars['items'] = SettingsManager::instance()->listItems('mysettings');
+        $this->vars['items'] = $this->settingsManager->listItems('mysettings');
         $this->bodyClass = 'compact-container';
     }
 
@@ -65,7 +73,8 @@ class Settings extends Controller
 
     public function update($author, $plugin, $code = null)
     {
-        SettingsManager::setContext($author.'.'.$plugin, $code);
+        $this->settingsManager->setContextOwner($author.'.'.$plugin);
+        $this->settingsManager->setContextItemCode($code);
 
         $this->vars['parentLink'] = Backend::url('system/settings');
         $this->vars['parentLabel'] = Lang::get('system::lang.settings.menu_label');
@@ -173,16 +182,14 @@ class Settings extends Controller
      */
     protected function findSettingItem($author, $plugin, $code)
     {
-        $manager = SettingsManager::instance();
-
         $moduleOwner = $author;
         $moduleCode = $plugin;
-        $item = $manager->findSettingItem($moduleOwner, $moduleCode);
+        $item = $this->settingsManager->findSettingItem($moduleOwner, $moduleCode);
 
         if (!$item) {
             $pluginOwner = $author . '.' . $plugin;
             $pluginCode = $code;
-            $item = $manager->findSettingItem($pluginOwner, $pluginCode);
+            $item = $this->settingsManager->findSettingItem($pluginOwner, $pluginCode);
         }
 
         return $item;

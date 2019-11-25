@@ -8,6 +8,7 @@ use System\Classes\Contracts\MailManagerContract;
 use System\Classes\Contracts\MarkupManagerContract;
 use System\Classes\Contracts\MediaLibraryContract;
 use System\Classes\Contracts\PluginManagerContract;
+use System\Classes\Contracts\SettingsManagerContract;
 use System\Classes\Contracts\UpdateManagerContract;
 use System\Classes\Contracts\VersionManagerContract;
 use System\Classes\MediaLibrary;
@@ -158,6 +159,7 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton(MailManagerContract::class, MailManager::class);
         App::singleton(MarkupManagerContract::class, MarkupManager::class);
         App::singleton(MediaLibraryContract::class, MediaLibrary::class);
+        App::singleton(SettingsManagerContract::class, SettingsManager::class);
     }
 
     /**
@@ -418,7 +420,9 @@ class ServiceProvider extends ModuleServiceProvider
          * Remove the October.System.system main menu item if there is no subpages to display
          */
         Event::listen('backend.menu.extendItems', function ($manager) {
-            $systemSettingItems = SettingsManager::instance()->listItems('system');
+            /** @var SettingsManagerContract $settingsManager */
+            $settingsManager = resolve(SettingsManagerContract::class);
+            $systemSettingItems = $settingsManager->listItems('system');
             $systemMenuItems = $manager->listSideMenuItems('October.System', 'system');
 
             if (empty($systemSettingItems) && empty($systemMenuItems)) {
@@ -476,84 +480,84 @@ class ServiceProvider extends ModuleServiceProvider
             \System\Models\LogSetting::filterSettingItems($manager);
         });
 
-        SettingsManager::instance()->registerCallback(function ($manager) {
-            $manager->registerSettingItems('October.System', [
-                'updates' => [
-                    'label'       => 'system::lang.updates.menu_label',
-                    'description' => 'system::lang.updates.menu_description',
-                    'category'    => SettingsManager::CATEGORY_SYSTEM,
-                    'icon'        => 'icon-cloud-download',
-                    'url'         => Backend::url('system/updates'),
-                    'permissions' => ['system.manage_updates'],
-                    'order'       => 300
-                ],
-                'administrators' => [
-                    'label'       => 'backend::lang.user.menu_label',
-                    'description' => 'backend::lang.user.menu_description',
-                    'category'    => SettingsManager::CATEGORY_SYSTEM,
-                    'icon'        => 'icon-users',
-                    'url'         => Backend::url('backend/users'),
-                    'permissions' => ['backend.manage_users'],
-                    'order'       => 400
-                ],
-                'mail_templates' => [
-                    'label'       => 'system::lang.mail_templates.menu_label',
-                    'description' => 'system::lang.mail_templates.menu_description',
-                    'category'    => SettingsManager::CATEGORY_MAIL,
-                    'icon'        => 'icon-envelope-square',
-                    'url'         => Backend::url('system/mailtemplates'),
-                    'permissions' => ['system.manage_mail_templates'],
-                    'order'       => 610
-                ],
-                'mail_settings' => [
-                    'label'       => 'system::lang.mail.menu_label',
-                    'description' => 'system::lang.mail.menu_description',
-                    'category'    => SettingsManager::CATEGORY_MAIL,
-                    'icon'        => 'icon-envelope',
-                    'class'       => 'System\Models\MailSetting',
-                    'permissions' => ['system.manage_mail_settings'],
-                    'order'       => 620
-                ],
-                'mail_brand_settings' => [
-                    'label'       => 'system::lang.mail_brand.menu_label',
-                    'description' => 'system::lang.mail_brand.menu_description',
-                    'category'    => SettingsManager::CATEGORY_MAIL,
-                    'icon'        => 'icon-paint-brush',
-                    'url'         => Backend::url('system/mailbrandsettings'),
-                    'permissions' => ['system.manage_mail_templates'],
-                    'order'       => 630
-                ],
-                'event_logs' => [
-                    'label'       => 'system::lang.event_log.menu_label',
-                    'description' => 'system::lang.event_log.menu_description',
-                    'category'    => SettingsManager::CATEGORY_LOGS,
-                    'icon'        => 'icon-exclamation-triangle',
-                    'url'         => Backend::url('system/eventlogs'),
-                    'permissions' => ['system.access_logs'],
-                    'order'       => 900,
-                    'keywords'    => 'error exception'
-                ],
-                'request_logs' => [
-                    'label'       => 'system::lang.request_log.menu_label',
-                    'description' => 'system::lang.request_log.menu_description',
-                    'category'    => SettingsManager::CATEGORY_LOGS,
-                    'icon'        => 'icon-file-o',
-                    'url'         => Backend::url('system/requestlogs'),
-                    'permissions' => ['system.access_logs'],
-                    'order'       => 910,
-                    'keywords'    => '404 error'
-                ],
-                'log_settings' => [
-                    'label'       => 'system::lang.log.menu_label',
-                    'description' => 'system::lang.log.menu_description',
-                    'category'    => SettingsManager::CATEGORY_LOGS,
-                    'icon'        => 'icon-dot-circle-o',
-                    'class'       => 'System\Models\LogSetting',
-                    'permissions' => ['system.manage_logs'],
-                    'order'       => 990
-                ],
-            ]);
-        });
+        /** @var SettingsManagerContract $manager */
+        $manager = resolve(SettingsManagerContract::class);
+        $manager->registerSettingItems('October.System', [
+            'updates' => [
+                'label'       => 'system::lang.updates.menu_label',
+                'description' => 'system::lang.updates.menu_description',
+                'category'    => SettingsManager::CATEGORY_SYSTEM,
+                'icon'        => 'icon-cloud-download',
+                'url'         => Backend::url('system/updates'),
+                'permissions' => ['system.manage_updates'],
+                'order'       => 300
+            ],
+            'administrators' => [
+                'label'       => 'backend::lang.user.menu_label',
+                'description' => 'backend::lang.user.menu_description',
+                'category'    => SettingsManager::CATEGORY_SYSTEM,
+                'icon'        => 'icon-users',
+                'url'         => Backend::url('backend/users'),
+                'permissions' => ['backend.manage_users'],
+                'order'       => 400
+            ],
+            'mail_templates' => [
+                'label'       => 'system::lang.mail_templates.menu_label',
+                'description' => 'system::lang.mail_templates.menu_description',
+                'category'    => SettingsManager::CATEGORY_MAIL,
+                'icon'        => 'icon-envelope-square',
+                'url'         => Backend::url('system/mailtemplates'),
+                'permissions' => ['system.manage_mail_templates'],
+                'order'       => 610
+            ],
+            'mail_settings' => [
+                'label'       => 'system::lang.mail.menu_label',
+                'description' => 'system::lang.mail.menu_description',
+                'category'    => SettingsManager::CATEGORY_MAIL,
+                'icon'        => 'icon-envelope',
+                'class'       => 'System\Models\MailSetting',
+                'permissions' => ['system.manage_mail_settings'],
+                'order'       => 620
+            ],
+            'mail_brand_settings' => [
+                'label'       => 'system::lang.mail_brand.menu_label',
+                'description' => 'system::lang.mail_brand.menu_description',
+                'category'    => SettingsManager::CATEGORY_MAIL,
+                'icon'        => 'icon-paint-brush',
+                'url'         => Backend::url('system/mailbrandsettings'),
+                'permissions' => ['system.manage_mail_templates'],
+                'order'       => 630
+            ],
+            'event_logs' => [
+                'label'       => 'system::lang.event_log.menu_label',
+                'description' => 'system::lang.event_log.menu_description',
+                'category'    => SettingsManager::CATEGORY_LOGS,
+                'icon'        => 'icon-exclamation-triangle',
+                'url'         => Backend::url('system/eventlogs'),
+                'permissions' => ['system.access_logs'],
+                'order'       => 900,
+                'keywords'    => 'error exception'
+            ],
+            'request_logs' => [
+                'label'       => 'system::lang.request_log.menu_label',
+                'description' => 'system::lang.request_log.menu_description',
+                'category'    => SettingsManager::CATEGORY_LOGS,
+                'icon'        => 'icon-file-o',
+                'url'         => Backend::url('system/requestlogs'),
+                'permissions' => ['system.access_logs'],
+                'order'       => 910,
+                'keywords'    => '404 error'
+            ],
+            'log_settings' => [
+                'label'       => 'system::lang.log.menu_label',
+                'description' => 'system::lang.log.menu_description',
+                'category'    => SettingsManager::CATEGORY_LOGS,
+                'icon'        => 'icon-dot-circle-o',
+                'class'       => 'System\Models\LogSetting',
+                'permissions' => ['system.manage_logs'],
+                'order'       => 990
+            ],
+        ]);
     }
 
     /**

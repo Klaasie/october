@@ -8,6 +8,7 @@ use BackendAuth;
 use Backend\Models\UserRole;
 use Backend\Classes\WidgetManager;
 use October\Rain\Support\ModuleServiceProvider;
+use System\Classes\Contracts\SettingsManagerContract;
 use System\Classes\SettingsManager;
 use Cms\Classes\ComponentManager;
 use Cms\Classes\Page as CmsPage;
@@ -250,38 +251,38 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendSettings()
     {
-        SettingsManager::instance()->registerCallback(function ($manager) {
-            $manager->registerSettingItems('October.Cms', [
-                'theme' => [
-                    'label'       => 'cms::lang.theme.settings_menu',
-                    'description' => 'cms::lang.theme.settings_menu_description',
-                    'category'    => SettingsManager::CATEGORY_CMS,
-                    'icon'        => 'icon-picture-o',
-                    'url'         => Backend::url('cms/themes'),
-                    'permissions' => ['cms.manage_themes', 'cms.manage_theme_options'],
-                    'order'       => 200
-                ],
-                'maintenance_settings' => [
-                    'label'       => 'cms::lang.maintenance.settings_menu',
-                    'description' => 'cms::lang.maintenance.settings_menu_description',
-                    'category'    => SettingsManager::CATEGORY_CMS,
-                    'icon'        => 'icon-plug',
-                    'class'       => Models\MaintenanceSetting::class,
-                    'permissions' => ['cms.manage_themes'],
-                    'order'       => 300
-                ],
-                'theme_logs' => [
-                    'label'       => 'cms::lang.theme_log.menu_label',
-                    'description' => 'cms::lang.theme_log.menu_description',
-                    'category'    => SettingsManager::CATEGORY_LOGS,
-                    'icon'        => 'icon-magic',
-                    'url'         => Backend::url('cms/themelogs'),
-                    'permissions' => ['system.access_logs'],
-                    'order'       => 910,
-                    'keywords'    => 'theme change log'
-                ]
-            ]);
-        });
+        /** @var SettingsManagerContracts $manager */
+        $manager = resolve(SettingsManagerContract::class);
+        $manager->registerSettingItems('October.Cms', [
+            'theme' => [
+                'label'       => 'cms::lang.theme.settings_menu',
+                'description' => 'cms::lang.theme.settings_menu_description',
+                'category'    => SettingsManager::CATEGORY_CMS,
+                'icon'        => 'icon-picture-o',
+                'url'         => Backend::url('cms/themes'),
+                'permissions' => ['cms.manage_themes', 'cms.manage_theme_options'],
+                'order'       => 200
+            ],
+            'maintenance_settings' => [
+                'label'       => 'cms::lang.maintenance.settings_menu',
+                'description' => 'cms::lang.maintenance.settings_menu_description',
+                'category'    => SettingsManager::CATEGORY_CMS,
+                'icon'        => 'icon-plug',
+                'class'       => Models\MaintenanceSetting::class,
+                'permissions' => ['cms.manage_themes'],
+                'order'       => 300
+            ],
+            'theme_logs' => [
+                'label'       => 'cms::lang.theme_log.menu_label',
+                'description' => 'cms::lang.theme_log.menu_description',
+                'category'    => SettingsManager::CATEGORY_LOGS,
+                'icon'        => 'icon-magic',
+                'url'         => Backend::url('cms/themelogs'),
+                'permissions' => ['system.access_logs'],
+                'order'       => 910,
+                'keywords'    => 'theme change log'
+            ]
+        ]);
     }
 
     /**
