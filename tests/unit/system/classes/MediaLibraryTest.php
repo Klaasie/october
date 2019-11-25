@@ -1,6 +1,6 @@
 <?php
 
-use System\Classes\MediaLibrary;
+use System\Classes\Contracts\MediaLibraryContract;
 
 class MediaLibraryTest extends TestCase // @codingStandardsIgnoreLine
 {
@@ -46,7 +46,9 @@ class MediaLibraryTest extends TestCase // @codingStandardsIgnoreLine
     public function testInvalidPathsOnValidatePath($path)
     {
         $this->expectException('ApplicationException');
-        MediaLibrary::validatePath($path);
+        /** @var MediaLibraryContract $mediaLibrary */
+        $mediaLibrary = resolve(self::class);
+        $mediaLibrary->checkPath($path);
     }
 
     /**
@@ -54,7 +56,9 @@ class MediaLibraryTest extends TestCase // @codingStandardsIgnoreLine
      */
     public function testValidPathsOnValidatePath($path)
     {
-        $result = MediaLibrary::validatePath($path);
+        /** @var MediaLibraryContract $mediaLibrary */
+        $mediaLibrary = resolve(self::class);
+        $result = $mediaLibrary->checkPath($path);
         $this->assertInternalType('string', $result);
     }
 }

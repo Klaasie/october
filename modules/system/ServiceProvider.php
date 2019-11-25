@@ -6,9 +6,11 @@ use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\MailManagerContract;
 use System\Classes\Contracts\MarkupManagerContract;
+use System\Classes\Contracts\MediaLibraryContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\Contracts\UpdateManagerContract;
 use System\Classes\Contracts\VersionManagerContract;
+use System\Classes\MediaLibrary;
 use System\Classes\VersionManager;
 use View;
 use Event;
@@ -155,6 +157,7 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton(CombineAssetsContract::class, CombineAssets::class);
         App::singleton(MailManagerContract::class, MailManager::class);
         App::singleton(MarkupManagerContract::class, MarkupManager::class);
+        App::singleton(MediaLibraryContract::class, MediaLibrary::class);
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php namespace System\Twig;
 
 use System\Classes\Contracts\MarkupManagerContract;
+use System\Classes\Contracts\MediaLibraryContract;
 use Url;
 use Twig\Extension\AbstractExtension as TwigExtension;
 use Twig\TwigFilter as TwigSimpleFilter;
@@ -20,11 +21,17 @@ class Extension extends TwigExtension
     protected $markupManager;
 
     /**
+     * @var MediaLibraryContract
+     */
+    private $mediaLibrary;
+
+    /**
      * Creates the extension instance.
      */
     public function __construct()
     {
         $this->markupManager = resolve(MarkupManagerContract::class);
+        $this->mediaLibrary = resolve(MediaLibraryContract::class);
     }
 
     /**
@@ -98,6 +105,6 @@ class Extension extends TwigExtension
      */
     public function mediaFilter($file)
     {
-        return MediaLibrary::url($file);
+        return $this->mediaLibrary->getPathUrl($file);
     }
 }
