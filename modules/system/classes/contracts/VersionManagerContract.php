@@ -11,13 +11,6 @@ use System\Classes\PluginBase;
 interface VersionManagerContract
 {
     /**
-     * @return self
-     * @deprecated V1.0.xxx Instead of using this method,
-     *                      rework your logic to resolve the class through dependency injection.
-     */
-    public static function instance(): self;
-
-    /**
      * Updates a single plugin by its code or object with it's latest changes.
      * If the $stopOnVersion parameter is specified, the process stops after
      * the specified version is applied.
