@@ -477,7 +477,7 @@ class CombineAssets implements CombineAssetsContract
             $this->putCache($cacheKey, $cacheInfo);
         }
 
-        return $this->getCombinedUrl($cacheInfo['version'] . '.' . $extension);
+        return $this->getCombinedUrl($cacheInfo['version']);
     }
 
     /**
@@ -489,8 +489,16 @@ class CombineAssets implements CombineAssetsContract
      */
     protected function prepareCombiner(array $assets, $rewritePath = null)
     {
-        /*
-         * Extensibility
+        /**
+         * @event cms.combiner.beforePrepare
+         * Provides an opportunity to interact with the asset combiner before assets are combined
+         *
+         * Example usage:
+         *
+         *     Event::listen('cms.combiner.beforePrepare', function ((\System\Classes\CombineAssets) $assetCombiner, (array) $assets) {
+         *         $assetCombiner->registerFilter(...)
+         *     });
+         *
          */
         $this->events->fire('cms.combiner.beforePrepare', [$this, $assets]);
 
@@ -888,8 +896,18 @@ class CombineAssets implements CombineAssetsContract
             $cacheKey .= $this->getDeepHashFromAssets($assets);
         }
 
-        /*
-         * Extensibility
+        $dataHolder = (object) ['key' => $cacheKey];
+
+        /**
+         * @event cms.combiner.getCacheKey
+         * Provides an opportunity to modify the asset combiner's cache key
+         *
+         * Example usage:
+         *
+         *     Event::listen('cms.combiner.getCacheKey', function ((\System\Classes\CombineAssets) $assetCombiner, (stdClass) $dataHolder) {
+         *         $dataHolder->key = rand();
+         *     });
+         *
          */
         $dataHolder = (object) ['key' => $cacheKey];
         $this->events->fire('cms.combiner.getCacheKey', [$this, $dataHolder]);
