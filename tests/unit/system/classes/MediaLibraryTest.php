@@ -47,7 +47,7 @@ class MediaLibraryTest extends TestCase // @codingStandardsIgnoreLine
     {
         $this->expectException('ApplicationException');
         /** @var MediaLibraryContract $mediaLibrary */
-        $mediaLibrary = resolve(self::class);
+        $mediaLibrary = resolve(MediaLibraryContract::class);
         $mediaLibrary->checkPath($path);
     }
 
@@ -57,7 +57,7 @@ class MediaLibraryTest extends TestCase // @codingStandardsIgnoreLine
     public function testValidPathsOnValidatePath($path)
     {
         /** @var MediaLibraryContract $mediaLibrary */
-        $mediaLibrary = resolve(self::class);
+        $mediaLibrary = resolve(MediaLibraryContract::class);
         $result = $mediaLibrary->checkPath($path);
         $this->assertInternalType('string', $result);
     }

@@ -4,6 +4,9 @@ use System\Classes\Contracts\PluginManagerContract;
 
 class PluginManagerTest extends TestCase
 {
+    /**
+     * @var PluginManagerContract
+     */
     public $manager;
 
     public function setUp()
