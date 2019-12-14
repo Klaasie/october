@@ -1,6 +1,7 @@
 <?php
 
 use Backend\Classes\AuthManager;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\UpdateManager;
 use October\Rain\Database\Model as ActiveRecord;
@@ -8,7 +9,7 @@ use October\Tests\Concerns\InteractsWithAuthentication;
 
 abstract class PluginTestCase extends TestCase
 {
-    use InteractsWithAuthentication;
+//    use InteractsWithAuthentication;
 
     /**
      * @var array Cache for storing which plugins have been loaded
@@ -69,12 +70,6 @@ abstract class PluginTestCase extends TestCase
      */
     public function setUp()
     {
-        /*
-         * Force reload of October singletons
-         */
-        App::forgetInstance(PluginManagerContract::class);
-        App::forgetInstance(UpdateManager::class);
-
         /*
          * Create application instance
          */
