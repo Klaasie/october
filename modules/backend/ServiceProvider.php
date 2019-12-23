@@ -5,7 +5,7 @@ use Backend;
 use BackendMenu;
 use BackendAuth;
 use Backend\Classes\WidgetManager;
-use System\Classes\MailManager;
+use System\Classes\Contracts\MailManagerContract;
 use System\Classes\CombineAssets;
 use System\Classes\SettingsManager;
 use October\Rain\Support\ModuleServiceProvider;
@@ -51,12 +51,12 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerMailer()
     {
-        MailManager::instance()->registerCallback(function ($manager) {
-            $manager->registerMailTemplates([
-                'backend::mail.invite',
-                'backend::mail.restore',
-            ]);
-        });
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $mailManager->registerMailTemplates([
+            'backend::mail.invite',
+            'backend::mail.restore',
+        ]);
     }
 
     /**

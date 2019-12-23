@@ -4,6 +4,7 @@ use App;
 use System\Classes\ComposerManager;
 use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\ComposerManagerContract;
+use System\Classes\Contracts\MailManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\Contracts\UpdateManagerContract;
 use System\Classes\Contracts\VersionManagerContract;
@@ -42,6 +43,11 @@ class ServiceProvider extends ModuleServiceProvider
     private $pluginManager;
 
     /**
+     * @var MailManagerContract
+     */
+    private $mailManager;
+
+    /**
      * Register the service provider.
      *
      * @return void
@@ -54,6 +60,7 @@ class ServiceProvider extends ModuleServiceProvider
 
         $this->pluginManager = resolve(PluginManagerContract::class);
         $this->pluginManager->registerAll();
+        $this->mailManager = resolve(MailManagerContract::class);
 
         $this->registerPrivilegedActions();
 
@@ -145,6 +152,7 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton(UpdateManagerContract::class, UpdateManager::class);
         App::singleton(VersionManagerContract::class, VersionManager::class);
         App::singleton(CombineAssetsContract::class, CombineAssets::class);
+        App::singleton(MailManagerContract::class, MailManager::class);
     }
 
     /**
@@ -337,22 +345,20 @@ class ServiceProvider extends ModuleServiceProvider
         /*
          * Register system layouts
          */
-        MailManager::instance()->registerCallback(function ($manager) {
-            $manager->registerMailLayouts([
-                'default' => 'system::mail.layout-default',
-                'system' => 'system::mail.layout-system',
-            ]);
+        $this->mailManager->registerMailLayouts([
+            'default' => 'system::mail.layout-default',
+            'system' => 'system::mail.layout-system',
+        ]);
 
-            $manager->registerMailPartials([
-                'header' => 'system::mail.partial-header',
-                'footer' => 'system::mail.partial-footer',
-                'button' => 'system::mail.partial-button',
-                'panel' => 'system::mail.partial-panel',
-                'table' => 'system::mail.partial-table',
-                'subcopy' => 'system::mail.partial-subcopy',
-                'promotion' => 'system::mail.partial-promotion',
-            ]);
-        });
+        $this->mailManager->registerMailPartials([
+            'header' => 'system::mail.partial-header',
+            'footer' => 'system::mail.partial-footer',
+            'button' => 'system::mail.partial-button',
+            'panel' => 'system::mail.partial-panel',
+            'table' => 'system::mail.partial-table',
+            'subcopy' => 'system::mail.partial-subcopy',
+            'promotion' => 'system::mail.partial-promotion',
+        ]);
 
         /*
          * Override system mailer with mail settings
@@ -369,7 +375,10 @@ class ServiceProvider extends ModuleServiceProvider
         Event::listen('mailer.beforeAddContent', function ($mailer, $message, $view, $data, $raw, $plain) {
             $method = $raw === null ? 'addContentToMailer' : 'addRawContentToMailer';
             $plainOnly = $view === null; // When "plain-text only" email is sent, $view is null, this sets the flag appropriately
-            return !MailManager::instance()->$method($message, $raw ?: $view ?: $plain, $data, $plainOnly);
+
+            /** @var MailManagerContract $mailManager */
+            $mailManager = resolve(MailManagerContract::class);
+            return !$mailManager->$method($message, $raw ?: $view ?: $plain, $data, $plainOnly);
         });
     }
 

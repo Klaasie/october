@@ -1,8 +1,8 @@
 <?php namespace System\Models;
 
+use System\Classes\Contracts\MailManagerContract;
 use View;
 use Model;
-use System\Classes\MailManager;
 use October\Rain\Mail\MailParser;
 use File as FileHelper;
 
@@ -51,7 +51,9 @@ class MailTemplate extends Model
      */
     public static function listAllTemplates()
     {
-        $fileTemplates = (array) MailManager::instance()->listRegisteredTemplates();
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $fileTemplates = (array) $mailManager->listRegisteredTemplates();
         $dbTemplates = (array) self::lists('code', 'code');
         $templates = $fileTemplates + $dbTemplates;
         ksort($templates);
@@ -83,7 +85,9 @@ class MailTemplate extends Model
         MailLayout::createLayouts();
         MailPartial::createPartials();
 
-        $templates = MailManager::instance()->listRegisteredTemplates();
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $templates = $mailManager->listRegisteredTemplates();
         $dbTemplates = self::lists('is_custom', 'code');
         $newTemplates = array_diff_key($templates, $dbTemplates);
 
@@ -168,7 +172,9 @@ class MailTemplate extends Model
      */
     public static function registerCallback(callable $callback)
     {
-        traceLog('MailTemplate::registerCallback is deprecated, use ' . MailManager::class . '::registerCallback instead');
-        MailManager::instance()->registerCallback($callback);
+        traceLog('MailTemplate::registerCallback is deprecated, use ' . MailManagerContract::class . '::registerCallback instead');
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        $mailManager->registerCallback($callback);
     }
 }

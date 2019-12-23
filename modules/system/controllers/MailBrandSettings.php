@@ -6,9 +6,9 @@ use Flash;
 use Config;
 use Redirect;
 use BackendMenu;
+use System\Classes\Contracts\MailManagerContract;
 use System\Models\MailBrandSetting;
 use System\Classes\SettingsManager;
-use System\Classes\MailManager;
 use Backend\Classes\Controller;
 use System\Models\MailLayout;
 use System\Models\MailTemplate;
@@ -111,7 +111,9 @@ class MailBrandSettings extends Controller
         $template->layout = $layout;
         $template->content_html = File::get(base_path('modules/system/models/mailbrandsetting/sample_template.htm'));
 
-        return MailManager::instance()->renderTemplate($template, $data);
+        /** @var MailManagerContract $mailManager */
+        $mailManager = resolve(MailManagerContract::class);
+        return $mailManager->renderTemplate($template, $data);
     }
 
     public function formCreateModelObject()
