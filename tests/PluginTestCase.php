@@ -63,8 +63,8 @@ abstract class PluginTestCase extends Illuminate\Foundation\Testing\TestCase
         /*
          * Force reload of October singletons
          */
-        App::forgetInstance(PluginManagerContract::class);
-        App::forgetInstance(UpdateManager::class);
+        app()->forgetInstance(PluginManagerContract::class);
+        app()->forgetInstance(UpdateManager::class);
 
         /*
          * Create application instance
