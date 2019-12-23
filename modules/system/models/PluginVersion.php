@@ -3,7 +3,7 @@
 use Lang;
 use Model;
 use Config;
-use System\Classes\PluginManager;
+use System\Classes\Contracts\PluginManagerContract;
 
 /**
  * Stores information about current plugin versions.
@@ -85,7 +85,8 @@ class PluginVersion extends Model
          * Override the database columns with the plugin details
          * found in the plugin registration file.
          */
-        $manager = PluginManager::instance();
+        /** @var PluginManagerContract $manager */
+        $manager = resolve(PluginManagerContract::class);
         $pluginObj = $manager->findByIdentifier($this->code);
 
         if ($pluginObj) {

@@ -1,7 +1,7 @@
 <?php namespace System\Console;
 
 use Illuminate\Console\Command;
-use System\Classes\PluginManager;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Models\PluginVersion;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -32,7 +32,8 @@ class PluginEnable extends Command
      */
     public function handle()
     {
-        $pluginManager = PluginManager::instance();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
         $pluginName = $this->argument('name');
         $pluginName = $pluginManager->normalizeIdentifier($pluginName);
 

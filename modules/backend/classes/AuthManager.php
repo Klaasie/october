@@ -1,6 +1,6 @@
 <?php namespace Backend\Classes;
 
-use System\Classes\PluginManager;
+use System\Classes\Contracts\PluginManagerContract;
 use October\Rain\Auth\Manager as RainAuthManager;
 
 /**
@@ -116,7 +116,9 @@ class AuthManager extends RainAuthManager
         /*
          * Load plugin items
          */
-        $plugins = PluginManager::instance()->getPlugins();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
+        $plugins = $pluginManager->getPlugins();
 
         foreach ($plugins as $id => $plugin) {
             $items = $plugin->registerPermissions();

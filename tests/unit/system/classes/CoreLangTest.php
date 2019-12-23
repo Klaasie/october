@@ -1,7 +1,5 @@
 <?php
 
-use System\Classes\PluginManager;
-
 class CoreLangTest extends TestCase
 {
     public function testValidationTranslator()

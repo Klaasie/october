@@ -1,6 +1,7 @@
 <?php namespace System\Classes;
 
 use File;
+use System\Classes\Contracts\PluginManagerContract;
 use Yaml;
 use Db;
 use Carbon\Carbon;
@@ -61,14 +62,14 @@ class VersionManager
     protected $updater;
 
     /**
-     * @var System\Classes\PluginManager
+     * @var PluginManagerContract
      */
     protected $pluginManager;
 
     protected function init()
     {
         $this->updater = new Updater;
-        $this->pluginManager = PluginManager::instance();
+        $this->pluginManager = resolve(PluginManagerContract::class);
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php namespace System;
 
 use App;
+use System\Classes\Contracts\PluginManagerContract;
 use View;
 use Event;
 use Config;
@@ -30,6 +31,11 @@ use Illuminate\Support\Facades\Schema;
 class ServiceProvider extends ModuleServiceProvider
 {
     /**
+     * @var PluginManagerContract
+     */
+    private $pluginManager;
+
+    /**
      * Register the service provider.
      *
      * @return void
@@ -39,13 +45,15 @@ class ServiceProvider extends ModuleServiceProvider
         parent::register('system');
 
         $this->registerSingletons();
+
+        $this->pluginManager = resolve(PluginManagerContract::class);
+        $this->pluginManager->registerAll();
+
         $this->registerPrivilegedActions();
 
         /*
          * Register all plugins
          */
-        PluginManager::instance()->registerAll();
-
         $this->registerConsole();
         $this->registerErrorHandler();
         $this->registerLogging();
@@ -100,7 +108,7 @@ class ServiceProvider extends ModuleServiceProvider
         /*
          * Boot plugins
          */
-        PluginManager::instance()->bootAll();
+        $this->pluginManager->bootAll();
 
         parent::boot('system');
     }
@@ -125,6 +133,8 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton('backend.auth', function () {
             return \Backend\Classes\AuthManager::instance();
         });
+
+        App::singleton(PluginManagerContract::class, PluginManager::class);
     }
 
     /**
@@ -146,15 +156,15 @@ class ServiceProvider extends ModuleServiceProvider
             }
 
             if (stripos($path, $request) === 0) {
-                PluginManager::$noInit = true;
+                $this->pluginManager->setNoInit(true);
             }
         }
 
         /*
          * CLI
          */
-        if (App::runningInConsole() && count(array_intersect($commands, Request::server('argv'))) > 0) {
-            PluginManager::$noInit = true;
+        if (App::runningInConsole() && count(array_intersect($commands, Request::server('argv', []))) > 0) {
+            $this->pluginManager->setNoInit(true);
         }
     }
 
@@ -221,7 +231,7 @@ class ServiceProvider extends ModuleServiceProvider
                 return;
             }
 
-            $plugins = PluginManager::instance()->getPlugins();
+            $plugins = $this->pluginManager->getPlugins();
             foreach ($plugins as $plugin) {
                 if (method_exists($plugin, 'registerSchedule')) {
                     $plugin->registerSchedule($schedule);

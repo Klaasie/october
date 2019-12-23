@@ -1,7 +1,7 @@
 <?php namespace Cms\Classes;
 
 use Str;
-use System\Classes\PluginManager;
+use System\Classes\Contracts\PluginManagerContract;
 use SystemException;
 use Illuminate\Support\Facades\App;
 
@@ -56,7 +56,8 @@ class ComponentManager
         /*
          * Load plugin components
          */
-        $pluginManager = PluginManager::instance();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
         $plugins = $pluginManager->getPlugins();
 
         foreach ($plugins as $plugin) {

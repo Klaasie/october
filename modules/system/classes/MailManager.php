@@ -1,5 +1,6 @@
 <?php namespace System\Classes;
 
+use System\Classes\Contracts\PluginManagerContract;
 use Twig;
 use Markdown;
 use System\Models\MailPartial;
@@ -337,7 +338,9 @@ class MailManager
             $callback($this);
         }
 
-        $plugins = PluginManager::instance()->getPlugins();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
+        $plugins = $pluginManager->getPlugins();
         foreach ($plugins as $pluginId => $pluginObj) {
             $layouts = $pluginObj->registerMailLayouts();
             if (is_array($layouts)) {

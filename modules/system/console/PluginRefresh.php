@@ -1,8 +1,8 @@
 <?php namespace System\Console;
 
 use Illuminate\Console\Command;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\UpdateManager;
-use System\Classes\PluginManager;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
@@ -39,8 +39,10 @@ class PluginRefresh extends Command
          * Lookup plugin
          */
         $pluginName = $this->argument('name');
-        $pluginName = PluginManager::instance()->normalizeIdentifier($pluginName);
-        if (!PluginManager::instance()->exists($pluginName)) {
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
+        $pluginName = $pluginManager->normalizeIdentifier($pluginName);
+        if (!$pluginManager->exists($pluginName)) {
             throw new \InvalidArgumentException(sprintf('Plugin "%s" not found.', $pluginName));
         }
 

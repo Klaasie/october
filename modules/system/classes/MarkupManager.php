@@ -1,6 +1,7 @@
 <?php namespace System\Classes;
 
 use Str;
+use System\Classes\Contracts\PluginManagerContract;
 use Twig\TokenParser\AbstractTokenParser as TwigTokenParser;
 use Twig\TwigFilter as TwigSimpleFilter;
 use Twig\TwigFunction as TwigSimpleFunction;
@@ -31,7 +32,7 @@ class MarkupManager
     protected $items;
 
     /**
-     * @var \System\Classes\PluginManager
+     * @var PluginManagerContract
      */
     protected $pluginManager;
 
@@ -50,7 +51,7 @@ class MarkupManager
      */
     protected function init()
     {
-        $this->pluginManager = PluginManager::instance();
+        $this->pluginManager = resolve(PluginManagerContract::class);
     }
 
     protected function loadExtensions()

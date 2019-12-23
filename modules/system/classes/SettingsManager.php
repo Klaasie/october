@@ -3,6 +3,7 @@
 use Event;
 use Backend;
 use BackendAuth;
+use System\Classes\Contracts\PluginManagerContract;
 use SystemException;
 
 /**
@@ -74,7 +75,7 @@ class SettingsManager
     ];
 
     /**
-     * @var System\Classes\PluginManager
+     * @var PluginManagerContract
      */
     protected $pluginManager;
 
@@ -83,7 +84,7 @@ class SettingsManager
      */
     protected function init()
     {
-        $this->pluginManager = PluginManager::instance();
+        $this->pluginManager = resolve(PluginManagerContract::class);
     }
 
     protected function loadItems()
@@ -363,6 +364,10 @@ class SettingsManager
      */
     protected function filterItemPermissions($user, array $items)
     {
+        if (!$user) {
+            return $items;
+        }
+
         $items = array_filter($items, function ($item) use ($user) {
             if (!$item->permissions || !count($item->permissions)) {
                 return true;

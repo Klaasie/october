@@ -3,10 +3,10 @@
 use Lang;
 use Config;
 use BackendAuth;
+use System\Classes\Contracts\PluginManagerContract;
 use System\Models\Parameter;
 use System\Models\LogSetting;
 use System\Classes\UpdateManager;
-use System\Classes\PluginManager;
 use Backend\Classes\ReportWidgetBase;
 use System\Models\EventLog;
 use System\Models\RequestLog;
@@ -81,7 +81,9 @@ class Status extends ReportWidgetBase
     {
         $warnings = [];
 
-        $missingPlugins = PluginManager::instance()->findMissingDependencies();
+        /** @var PluginManagerContract $pluginManager */
+        $pluginManager = resolve(PluginManagerContract::class);
+        $missingPlugins = $pluginManager->findMissingDependencies();
 
         $writablePaths = [
             temp_path(),
