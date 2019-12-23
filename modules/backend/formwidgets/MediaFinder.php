@@ -1,5 +1,8 @@
 <?php namespace Backend\FormWidgets;
 
+use BackendAuth;
+use Backend\Classes\FormField;
+use System\Classes\Contracts\MediaLibraryContract;
 use System\Classes\MediaLibrary;
 use Backend\Classes\FormField;
 use Backend\Classes\FormWidgetBase;
@@ -86,9 +89,12 @@ class MediaFinder extends FormWidgetBase
         $value = $this->getLoadValue();
         $isImage = $this->mode === 'image';
 
+        /** @var MediaLibraryContract $mediaLibrary */
+        $mediaLibrary = resolve(MediaLibraryContract::class);
+
         $this->vars['value'] = $value;
-        $this->vars['imageUrl'] = $isImage && $value ? MediaLibrary::url($value) : '';
-        $this->vars['imageExists'] = $isImage && $value ? MediaLibrary::instance()->exists($value) : '';
+        $this->vars['imageUrl'] = $isImage && $value ? $mediaLibrary->getPathUrl($value) : '';
+        $this->vars['imageExists'] = $isImage && $value ? $mediaLibrary->exists($value) : '';
         $this->vars['field'] = $this->formField;
         $this->vars['prompt'] = str_replace('%s', '<i class="icon-folder"></i>', trans($this->prompt));
         $this->vars['mode'] = $this->mode;

@@ -1,5 +1,6 @@
 <?php namespace Backend\Widgets;
 
+use System\Classes\Contracts\MediaLibraryContract;
 use Url;
 use Str;
 use Lang;
@@ -39,6 +40,11 @@ class MediaManager extends WidgetBase
     const FILTER_EVERYTHING = 'everything';
 
     /**
+     * @var MediaLibraryContract
+     */
+    private $mediaLibrary;
+
+    /**
      * @var string Hash string for the broken image graphic.
      */
     protected $brokenImageHash;
@@ -67,6 +73,8 @@ class MediaManager extends WidgetBase
         $this->readOnly = $readOnly;
 
         parent::__construct($controller, []);
+
+        $this->mediaLibrary = resolve(MediaLibraryContract::class);
 
         $this->checkUploadPostback();
     }
@@ -133,7 +141,7 @@ class MediaManager extends WidgetBase
         $path = Input::get('path');
 
         if (Input::get('clearCache')) {
-            MediaLibrary::instance()->resetCache();
+            $this->mediaLibrary->resetCache();
         }
 
         if (Input::get('resetSearch')) {
@@ -184,7 +192,7 @@ class MediaManager extends WidgetBase
         $thumbnailParams['height'] = 255;
         $thumbnailParams['mode'] = 'auto';
 
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
 
         if (!is_numeric($lastModified)) {
             throw new ApplicationException('Invalid input data');
@@ -290,8 +298,6 @@ class MediaManager extends WidgetBase
             throw new ApplicationException('Invalid input data');
         }
 
-        $library = MediaLibrary::instance();
-
         $filesToDelete = [];
         foreach ($paths as $pathInfo) {
             $path = array_get($pathInfo, 'path');
@@ -311,7 +317,7 @@ class MediaManager extends WidgetBase
                 /*
                  * Delete single folder
                  */
-                $library->deleteFolder($path);
+                $this->mediaLibrary->deleteFolder($path);
 
                 /**
                  * @event media.folder.delete
@@ -338,7 +344,7 @@ class MediaManager extends WidgetBase
             /*
              * Delete collection of files
              */
-            $library->deleteFiles($filesToDelete);
+            $this->mediaLibrary->deleteFiles($filesToDelete);
 
             /*
              * Extensibility
@@ -365,7 +371,7 @@ class MediaManager extends WidgetBase
             }
         }
 
-        $library->resetCache();
+        $this->mediaLibrary->resetCache();
         $this->prepareVars();
 
         return [
@@ -382,7 +388,7 @@ class MediaManager extends WidgetBase
         $this->abortIfReadOnly();
 
         $path = Input::get('path');
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
 
         $this->vars['originalPath'] = $path;
         $this->vars['name'] = basename($path);
@@ -410,7 +416,7 @@ class MediaManager extends WidgetBase
         }
 
         $originalPath = Input::get('originalPath');
-        $originalPath = MediaLibrary::validatePath($originalPath);
+        $originalPath = $this->mediaLibrary->checkPath($originalPath);
         $newPath = dirname($originalPath).'/'.$newName;
         $type = Input::get('type');
 
@@ -425,7 +431,7 @@ class MediaManager extends WidgetBase
             /*
              * Move single file
              */
-            MediaLibrary::instance()->moveFile($originalPath, $newPath);
+            $this->mediaLibrary->moveFile($originalPath, $newPath);
 
             /**
              * @event media.file.rename
@@ -450,7 +456,7 @@ class MediaManager extends WidgetBase
             /*
              * Move single folder
              */
-            MediaLibrary::instance()->moveFolder($originalPath, $newPath);
+            $this->mediaLibrary->moveFolder($originalPath, $newPath);
 
             /**
              * @event media.folder.rename
@@ -472,7 +478,7 @@ class MediaManager extends WidgetBase
             $this->fireSystemEvent('media.folder.rename', [$originalPath, $newPath]);
         }
 
-        MediaLibrary::instance()->resetCache();
+        $this->mediaLibrary->resetCache();
     }
 
     /**
@@ -493,20 +499,18 @@ class MediaManager extends WidgetBase
         }
 
         $path = Input::get('path');
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
 
         $newFolderPath = $path.'/'.$name;
 
-        $library = MediaLibrary::instance();
-
-        if ($library->folderExists($newFolderPath)) {
+        if ($this->mediaLibrary->folderExists($newFolderPath)) {
             throw new ApplicationException(Lang::get('backend::lang.media.folder_or_file_exist'));
         }
 
         /*
          * Create the new folder
          */
-        if (!$library->makeFolder($newFolderPath)) {
+        if (!$this->mediaLibrary->makeFolder($newFolderPath)) {
             throw new ApplicationException(Lang::get('backend::lang.media.error_creating_folder'));
         }
 
@@ -529,7 +533,7 @@ class MediaManager extends WidgetBase
          */
         $this->fireSystemEvent('media.folder.create', [$newFolderPath]);
 
-        $library->resetCache();
+        $this->mediaLibrary->resetCache();
 
         $this->prepareVars();
 
@@ -551,7 +555,7 @@ class MediaManager extends WidgetBase
             throw new ApplicationException('Invalid input data');
         }
 
-        $folders = MediaLibrary::instance()->listAllDirectories($exclude);
+        $folders = $this->mediaLibrary->listAllDirectories($exclude);
 
         $folderList = [];
         foreach ($folders as $folder) {
@@ -587,7 +591,7 @@ class MediaManager extends WidgetBase
             throw new ApplicationException(Lang::get('backend::lang.media.please_select_move_dest'));
         }
 
-        $dest = MediaLibrary::validatePath($dest);
+        $dest = $this->mediaLibrary->checkPath($dest);
         if ($dest == Input::get('originalPath')) {
             throw new ApplicationException(Lang::get('backend::lang.media.move_dest_src_match'));
         }
@@ -602,13 +606,11 @@ class MediaManager extends WidgetBase
             throw new ApplicationException('Invalid input data');
         }
 
-        $library = MediaLibrary::instance();
-
         foreach ($files as $path) {
             /*
              * Move a single file
              */
-            $library->moveFile($path, $dest.'/'.basename($path));
+            $this->mediaLibrary->moveFile($path, $dest.'/'.basename($path));
 
             /**
              * @event media.file.move
@@ -634,7 +636,7 @@ class MediaManager extends WidgetBase
             /*
              * Move a single folder
              */
-            $library->moveFolder($path, $dest.'/'.basename($path));
+            $this->mediaLibrary->moveFolder($path, $dest.'/'.basename($path));
 
             /**
              * @event media.folder.move
@@ -656,7 +658,7 @@ class MediaManager extends WidgetBase
             $this->fireSystemEvent('media.folder.move', [$path, $dest]);
         }
 
-        $library->resetCache();
+        $this->mediaLibrary->resetCache();
 
         $this->prepareVars();
 
@@ -698,7 +700,7 @@ class MediaManager extends WidgetBase
         $this->abortIfReadOnly();
 
         $path = Input::get('path');
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
         $cropSessionKey = md5(FormHelper::getSessionKey());
         $selectionParams = $this->getSelectionParams();
 
@@ -746,7 +748,7 @@ class MediaManager extends WidgetBase
         $selectionData = Input::get('selection');
         $cropSessionKey = Input::get('cropSessionKey');
         $path = Input::get('path');
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
 
         if (!strlen($imageSrcPath)) {
             throw new ApplicationException('Invalid input data');
@@ -795,7 +797,7 @@ class MediaManager extends WidgetBase
         }
 
         $path = Input::get('path');
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
 
         $params = [
             'width' => $width,
@@ -856,7 +858,7 @@ class MediaManager extends WidgetBase
     {
         $filter = $filter !== self::FILTER_EVERYTHING ? $filter : null;
 
-        return MediaLibrary::instance()->listFolderContents($folder, $sortBy, $filter);
+        return $this->mediaLibrary->listFolderContents($folder, $sortBy, $filter);
     }
 
     /**
@@ -871,7 +873,7 @@ class MediaManager extends WidgetBase
     {
         $filter = $filter !== self::FILTER_EVERYTHING ? $filter : null;
 
-        return MediaLibrary::instance()->findFiles($searchTerm, $sortBy, $filter);
+        return $this->mediaLibrary->findFiles($searchTerm, $sortBy, $filter);
     }
 
     /**
@@ -881,7 +883,7 @@ class MediaManager extends WidgetBase
      */
     protected function setCurrentFolder($path)
     {
-        $path = MediaLibrary::validatePath($path);
+        $path = $this->mediaLibrary->checkPath($path);
 
         $this->putSession('media_folder', $path);
     }
@@ -951,9 +953,9 @@ class MediaManager extends WidgetBase
     protected function setSortBy($sortBy)
     {
         if (!in_array($sortBy, [
-            MediaLibrary::SORT_BY_TITLE,
-            MediaLibrary::SORT_BY_SIZE,
-            MediaLibrary::SORT_BY_MODIFIED
+            $this->mediaLibrary->getSortByTitleString(),
+            $this->mediaLibrary->getSortBySizeString(),
+            $this->mediaLibrary->getSortByModifiedString()
         ])) {
             throw new ApplicationException('Invalid input data');
         }
@@ -967,7 +969,7 @@ class MediaManager extends WidgetBase
      */
     protected function getSortBy()
     {
-        return $this->getSession('media_sort_by', MediaLibrary::SORT_BY_TITLE);
+        return $this->getSession('media_sort_by', $this->mediaLibrary->getSortByTitleString());
     }
 
     /**
@@ -978,8 +980,8 @@ class MediaManager extends WidgetBase
     protected function setSortDirection($sortDirection)
     {
         if (!in_array($sortDirection, [
-            MediaLibrary::SORT_DIRECTION_ASC,
-            MediaLibrary::SORT_DIRECTION_DESC
+            $this->mediaLibrary->getSortDirectionAscString(),
+            $this->mediaLibrary->getSortDirectionDescString()
         ])) {
             throw new ApplicationException('Invalid input data');
         }
@@ -993,7 +995,7 @@ class MediaManager extends WidgetBase
      */
     protected function getSortDirection()
     {
-        return $this->getSession('media_sort_direction', MediaLibrary::SORT_DIRECTION_ASC);
+        return $this->getSession('media_sort_direction', $this->mediaLibrary->getSortDirectionAscString());
     }
 
     /**
@@ -1109,7 +1111,7 @@ class MediaManager extends WidgetBase
      */
     protected function splitPathToSegments($path)
     {
-        $path = MediaLibrary::validatePath($path, true);
+        $path = $this->mediaLibrary->checkPath($path, true);
         $path = explode('/', ltrim($path, '/'));
 
         $result = [];
@@ -1269,7 +1271,7 @@ class MediaManager extends WidgetBase
 
         $mediaFolder = Config::get('cms.storage.media.folder', 'media');
 
-        $path = temp_path() . MediaLibrary::validatePath($mediaFolder, true);
+        $path = temp_path() . $this->mediaLibrary->checkPath($mediaFolder, true);
 
         if (!File::isDirectory($path)) {
             File::makeDirectory($path, 0777, true, true);
@@ -1288,7 +1290,7 @@ class MediaManager extends WidgetBase
          * NOTE: Custom routing for /storage/temp/$thumbnailDirectory must be setup
          * to return the thumbnail if not using default 'public' directory
          */
-        return MediaLibrary::validatePath(Config::get('cms.storage.media.thumbFolder', 'public'), true) . '/';
+        return $this->mediaLibrary->checkPath(Config::get('cms.storage.media.thumbFolder', 'public'), true) . '/';
     }
 
     /**
@@ -1346,10 +1348,9 @@ class MediaManager extends WidgetBase
                 /*
                  * Save the file locally
                  */
-                $library = MediaLibrary::instance();
                 $tempFilePath = $this->getLocalTempFilePath($path);
 
-                if (!@File::put($tempFilePath, $library->get($path))) {
+                if (!@File::put($tempFilePath, $this->mediaLibrary->get($path))) {
                     throw new SystemException('Error saving remote file to a temporary location');
                 }
 
@@ -1555,7 +1556,7 @@ class MediaManager extends WidgetBase
             }
 
             $path = $quickMode ? '/uploaded-files' : Input::get('path');
-            $path = MediaLibrary::validatePath($path);
+            $path = $this->mediaLibrary->checkPath($path);
             $filePath = $path.'/'.$fileName;
 
             /*
@@ -1565,7 +1566,7 @@ class MediaManager extends WidgetBase
                              ? $uploadedFile->getPath() . DIRECTORY_SEPARATOR . $uploadedFile->getFileName()
                              : $uploadedFile->getRealPath();
 
-            MediaLibrary::instance()->put(
+            $this->mediaLibrary->put(
                 $filePath,
                 File::get($realPath)
             );
@@ -1590,7 +1591,7 @@ class MediaManager extends WidgetBase
             $this->fireSystemEvent('media.file.upload', [$filePath, $uploadedFile]);
 
             $response = Response::make([
-                'link' => MediaLibrary::url($filePath),
+                'link' => $this->mediaLibrary->getPathUrl($filePath),
                 'result' => 'success'
             ]);
         }
@@ -1697,7 +1698,6 @@ class MediaManager extends WidgetBase
 
         try {
             $extension = pathinfo($path, PATHINFO_EXTENSION);
-            $library = MediaLibrary::instance();
             $originalThumbFileName = 'original.'.$extension;
 
             /*
@@ -1707,7 +1707,7 @@ class MediaManager extends WidgetBase
             if (!$params) {
                 $tempFilePath = $fullSessionDirectoryPath.'/'.$originalThumbFileName;
 
-                if (!@File::put($tempFilePath, $library->get($path))) {
+                if (!@File::put($tempFilePath, $this->mediaLibrary->get($path))) {
                     throw new SystemException('Error saving remote file to a temporary location.');
                 }
 
@@ -1866,8 +1866,7 @@ class MediaManager extends WidgetBase
         $targetFolder = $path.'cropped-images';
         $targetPath = $targetFolder.'/'.$targetImageName;
 
-        $library = MediaLibrary::instance();
-        $library->put($targetPath, file_get_contents($targetTmpPath));
+        $this->mediaLibrary->put($targetPath, file_get_contents($targetTmpPath));
 
         return [
             'publicUrl' => $library->getPathUrl($targetPath),
