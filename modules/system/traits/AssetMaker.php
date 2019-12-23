@@ -1,5 +1,6 @@
 <?php namespace System\Traits;
 
+use System\Classes\Contracts\CombineAssetsContract;
 use Url;
 use Html;
 use File;
@@ -208,7 +209,9 @@ trait AssetMaker
             return '';
         }
         $assetPath = !empty($localPath) ? $localPath : $this->assetPath;
-        return Url::to(CombineAssets::combine($assets, $assetPath));
+        /** @var CombineAssetsContract $combineAssets */
+        $combineAssets = resolve(CombineAssetsContract::class);
+        return Url::to($combineAssets->prepareRequest($assets, $assetPath));
     }
 
     /**

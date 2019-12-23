@@ -10,30 +10,13 @@ use System\Classes\CombineAssets;
 interface CombineAssetsContract
 {
     /**
-     * @return self
-     * @deprecated V1.0.xxx Instead of using this method,
-     *                      rework your logic to resolve the class through dependency injection.
-     */
-    public static function instance(): self;
-
-    /**
-     * Combines JavaScript or StyleSheet file references
-     * to produce a page relative URL to the combined contents.
+     * Combines asset file references of a single type to produce a URL reference to the combined contents.
      *
-     *     $assets = [
-     *         'assets/vendor/mustache/mustache.js',
-     *         'assets/js/vendor/jquery.ui.widget.js',
-     *         'assets/js/vendor/canvas-to-blob.js',
-     *     ];
-     *
-     *     CombineAssets::combine($assets, base_path('plugins/acme/blog'));
-     *
-     * @param array $assets Collection of assets
-     * @param string $localPath Prefix all assets with this path (optional)
+     * @param array $assets List of asset files.
+     * @param string $localPath File extension, used for aesthetic purposes only.
      * @return string URL to contents.
-     * @todo Type hint!
      */
-    public static function combine($assets = [], $localPath = null): string;
+    public function prepareRequest(array $assets, $localPath = null): string;
 
     /**
      * Combines a collection of assets files to a destination file
@@ -66,21 +49,6 @@ interface CombineAssetsContract
      * @todo Type hint!
      */
     public function getContents($cacheKey): string;
-
-    /**
-     * Registers a callback function that defines bundles.
-     * The callback function should register bundles by calling the manager's
-     * `registerBundle` method. This instance is passed to the callback
-     * function as an argument. Usage:
-     *
-     *     CombineAssets::registerCallback(function ($combiner) {
-     *         $combiner->registerBundle('~/modules/backend/assets/less/october.less');
-     *     });
-     *
-     * @param callable $callback A callable function.
-     * @return void
-     */
-    public static function registerCallback(callable $callback);
 
     /**
      * Register a filter to apply to the combining process.
@@ -165,5 +133,5 @@ interface CombineAssetsContract
      *
      * @return void
      */
-    public static function resetCache();
+    public function forgetCache();
 }
