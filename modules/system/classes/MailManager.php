@@ -78,9 +78,14 @@ class MailManager implements MailManagerContract
         $this->markdown = $markdown;
     }
 
-
     /**
-     * {@inheritDoc}
+     * Returns itself
+     *
+     * Kept this one to remain backwards compatible.
+     *
+     * @return self
+     * @deprecated V1.0.xxx Instead of using this method,
+     *                      rework your logic to resolve the class through dependency injection.
      */
     public static function instance(): MailManagerContract
     {
