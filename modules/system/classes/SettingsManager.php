@@ -1,9 +1,11 @@
 <?php namespace System\Classes;
 
-use Event;
-use Backend;
-use BackendAuth;
+use Backend\Classes\AuthManager;
+use Backend\Helpers\Backend;
+use Backend\Models\User;
+use Illuminate\Contracts\Events\Dispatcher;
 use System\Classes\Contracts\PluginManagerContract;
+use System\Classes\Contracts\SettingsManagerContract;
 use SystemException;
 
 /**
@@ -12,10 +14,8 @@ use SystemException;
  * @package october\system
  * @author Alexey Bobkov, Samuel Georges
  */
-class SettingsManager
+class SettingsManager implements SettingsManagerContract
 {
-    use \October\Rain\Support\Traits\Singleton;
-
     /**
      * Allocated category types
      */
@@ -80,13 +80,50 @@ class SettingsManager
     protected $pluginManager;
 
     /**
-     * Initialize this singleton.
+     * @var Dispatcher
      */
-    protected function init()
+    private $events;
+
+    /**
+     * @var Backend
+     */
+    private $backend;
+
+    /**
+     * @var AuthManager
+     */
+    private $backendAuth;
+
+    /**
+     * SettingsManager constructor.
+     *
+     * @param PluginManagerContract $pluginManager
+     */
+    public function __construct(PluginManagerContract $pluginManager)
     {
-        $this->pluginManager = resolve(PluginManagerContract::class);
+        $this->pluginManager = $pluginManager;
+        $this->events = resolve('events');
+        $this->backend = resolve('backend.helper');
+        $this->backendAuth = resolve('backend.auth');
     }
 
+    /**
+     * Return itself
+     *
+     * Kept this one to remain backwards compatible.
+     *
+     * @return self
+     * @deprecated V1.0.xxx Instead of using this method,
+     *                      rework your logic to resolve the class through dependency injection.
+     */
+    public static function instance(): SettingsManagerContract
+    {
+        return resolve(SettingsManagerContract::class);
+    }
+
+    /**
+     * Load Items
+     */
     protected function loadItems()
     {
         /*
@@ -113,19 +150,20 @@ class SettingsManager
         /*
          * Extensibility
          */
-        Event::fire('system.settings.extendItems', [$this]);
+        $this->events->fire('system.settings.extendItems', [$this]);
 
         /*
          * Sort settings items
          */
-        usort($this->items, function ($a, $b) {
+        usort($this->items, static function ($a, $b) {
             return $a->order - $b->order;
         });
 
         /*
          * Filter items user lacks permission for
          */
-        $user = BackendAuth::getUser();
+        /** @var User $user */
+        $user = $this->backendAuth->getUser();
         $this->items = $this->filterItemPermissions($user, $this->items);
 
         /*
@@ -145,13 +183,11 @@ class SettingsManager
     }
 
     /**
-     * Returns a collection of all settings by group, filtered by context
-     * @param  string $context
-     * @return array
+     * {@inheritDoc}
      */
-    public function listItems($context = null)
+    public function listItems($context = null): array
     {
-        if ($this->items === null) {
+        if ($this->items === null || $this->groupedItems === null) {
             $this->loadItems();
         }
 
@@ -164,11 +200,12 @@ class SettingsManager
 
     /**
      * Filters a set of items by a given context.
+     *
      * @param  array $items
      * @param  string $context
      * @return array
      */
-    protected function filterByContext($items, $context)
+    protected function filterByContext($items, $context): array
     {
         $filteredItems = [];
         foreach ($items as $categoryName => $category) {
@@ -189,16 +226,7 @@ class SettingsManager
     }
 
     /**
-     * Registers a callback function that defines setting items.
-     * The callback function should register setting items by calling the manager's
-     * registerSettingItems() function. The manager instance is passed to the
-     * callback function as an argument. Usage:
-     *
-     *     SettingsManager::registerCallback(function ($manager) {
-     *         $manager->registerSettingItems([...]);
-     *     });
-     *
-     * @param callable $callback A callable function.
+     * {@inheritDoc}
      */
     public function registerCallback(callable $callback)
     {
@@ -206,20 +234,7 @@ class SettingsManager
     }
 
     /**
-     * Registers the back-end setting items.
-     * The argument is an array of the settings items. The array keys represent the
-     * setting item codes, specific for the plugin/module. Each element in the
-     * array should be an associative array with the following keys:
-     * - label - specifies the settings label localization string key, required.
-     * - icon - an icon name from the Font Awesome icon collection, required.
-     * - url - the back-end relative URL the setting item should point to.
-     * - class - the back-end relative URL the setting item should point to.
-     * - permissions - an array of permissions the back-end user should have, optional.
-     *   The item will be displayed if the user has any of the specified permissions.
-     * - order - a position of the item in the setting, optional.
-     * - category - a string to assign this item to a category, optional.
-     * @param string $owner Specifies the setting items owner plugin or module in the format Vendor.Module.
-     * @param array $definitions An array of the setting item definitions.
+     * {@inheritDoc}
      */
     public function registerSettingItems($owner, array $definitions)
     {
@@ -231,9 +246,7 @@ class SettingsManager
     }
 
     /**
-     * Dynamically add an array of setting items
-     * @param string $owner
-     * @param array  $definitions
+     * {@inheritDoc}
      */
     public function addSettingItems($owner, array $definitions)
     {
@@ -243,10 +256,7 @@ class SettingsManager
     }
 
     /**
-     * Dynamically add a single setting item
-     * @param string $owner
-     * @param string $code
-     * @param array  $definitions
+     * {@inheritDoc}
      */
     public function addSettingItem($owner, $code, array $definition)
     {
@@ -278,14 +288,15 @@ class SettingsManager
 
             $uri[] = strtolower($code);
             $uri =  implode('/', $uri);
-            $item['url'] = Backend::url('system/settings/update/' . $uri);
+            $item['url'] = $this->backend->url('system/settings/update/' . $uri);
         }
 
         $this->items[$itemKey] = (object) $item;
     }
 
     /**
-     * Removes a single setting item
+     * {@inheritDoc}
+     * @throws SystemException
      */
     public function removeSettingItem($owner, $code)
     {
@@ -312,17 +323,31 @@ class SettingsManager
      */
     public static function setContext($owner, $code)
     {
-        $instance = self::instance();
+        /** @var self $instance */
+        $instance = resolve(self::class);
 
-        $instance->contextOwner = strtolower($owner);
-        $instance->contextItemCode = strtolower($code);
+        $instance->setContextOwner(strtolower($owner));
+        $instance->setContextItemCode(strtolower($code));
     }
 
     /**
-     * Returns information about the current settings context.
-     * @return mixed Returns an object with the following fields:
-     * - itemCode
-     * - owner
+     * {@inheritDoc}
+     */
+    public function setContextOwner(string $contextOwner)
+    {
+        $this->contextOwner = $contextOwner;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContextItemCode(string $contextItemCode)
+    {
+        $this->contextItemCode = $contextItemCode;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getContext()
     {
@@ -333,10 +358,7 @@ class SettingsManager
     }
 
     /**
-     * Locates a setting item object by it's owner and code
-     * @param string $owner
-     * @param string $code
-     * @return mixed The item object or FALSE if nothing is found
+     * {@inheritDoc}
      */
     public function findSettingItem($owner, $code)
     {
@@ -348,7 +370,7 @@ class SettingsManager
         $code = strtolower($code);
 
         foreach ($this->items as $item) {
-            if (strtolower($item->owner) == $owner && strtolower($item->code) == $code) {
+            if (strtolower($item->owner) === $owner && strtolower($item->code) === $code) {
                 return $item;
             }
         }
@@ -358,17 +380,18 @@ class SettingsManager
 
     /**
      * Removes settings items from an array if the supplied user lacks permission.
+     *
      * @param User $user A user object
      * @param array $items A collection of setting items
      * @return array The filtered settings items
      */
-    protected function filterItemPermissions($user, array $items)
+    protected function filterItemPermissions($user, array $items): array
     {
         if (!$user) {
             return $items;
         }
 
-        $items = array_filter($items, function ($item) use ($user) {
+        $items = array_filter($items, static function ($item) use ($user) {
             if (!$item->permissions || !count($item->permissions)) {
                 return true;
             }
@@ -381,10 +404,12 @@ class SettingsManager
 
     /**
      * Internal method to make a unique key for an item.
-     * @param  object $item
+     *
+     * @param $owner
+     * @param $code
      * @return string
      */
-    protected function makeItemKey($owner, $code)
+    protected function makeItemKey($owner, $code): string
     {
         return strtoupper($owner).'.'.strtoupper($code);
     }
