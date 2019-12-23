@@ -12,7 +12,6 @@ use Response;
 use Closure;
 use Illuminate\Routing\Controller as ControllerBase;
 use October\Rain\Router\Helper as RouterHelper;
-use Closure;
 
 /**
  * This is the master controller for all back-end pages.
