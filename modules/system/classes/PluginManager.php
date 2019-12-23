@@ -13,6 +13,7 @@ use October\Rain\Support\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Schema;
+use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use Throwable;
 
@@ -53,6 +54,11 @@ class PluginManager implements PluginManagerContract
      * @var Connection
      */
     private $db;
+
+    /**
+     * @var ComposerManagerContract
+     */
+    private $composerManager;
 
     /**
      * @var Writer
@@ -108,6 +114,7 @@ class PluginManager implements PluginManagerContract
      * @param Repository $config
      * @param Factory $view
      * @param Connection $db
+     * @param ComposerManagerContract $composerManager
      * @param Writer $log
      * @throws FileNotFoundException
      */
@@ -118,6 +125,7 @@ class PluginManager implements PluginManagerContract
         Repository $config,
         Factory $view,
         Connection $db,
+        ComposerManagerContract $composerManager,
         Writer $log
     ) {
         $this->app = $app;
@@ -126,6 +134,7 @@ class PluginManager implements PluginManagerContract
         $this->config = $config;
         $this->view = $view;
         $this->db = $db;
+        $this->composerManager = $composerManager;
         $this->log = $log;
 
         $this->metaFile = storage_path('cms/disabled.json');
@@ -283,7 +292,7 @@ class PluginManager implements PluginManagerContract
          */
         $autoloadPath = $pluginPath . '/vendor/autoload.php';
         if ($this->filesystem->isFile($autoloadPath)) {
-            ComposerManager::instance()->autoload($pluginPath . '/vendor');
+            $this->composerManager->autoload($pluginPath . '/vendor');
         }
 
         if (!$this->isNoInit() || $plugin->elevated) {
