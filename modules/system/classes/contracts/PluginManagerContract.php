@@ -12,13 +12,6 @@ use System\Classes\PluginBase;
 interface PluginManagerContract
 {
     /**
-     * @return self
-     * @deprecated V1.0.xxx Instead of using this method,
-     *                      rework your logic to resolve the class through dependency injection.
-     */
-    public static function instance(): self;
-
-    /**
      * @return bool
      */
     public function isNoInit(): bool;
