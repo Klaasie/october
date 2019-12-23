@@ -1,5 +1,6 @@
 <?php
 
+use Backend\Classes\Contracts\NavigationManagerContract;
 use Backend\Classes\Controller;
 use Backend\Classes\NavigationManager;
 
@@ -7,7 +8,8 @@ class NavigationManagerTest extends TestCase
 {
     public function testRegisterMenuItems()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
         $items = $manager->listMainMenuItems();
         $this->assertArrayNotHasKey('OCTOBER.TEST.DASHBOARD', $items);
 
@@ -43,7 +45,8 @@ class NavigationManagerTest extends TestCase
 
     public function testListMainMenuItems()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
         $items = $manager->listMainMenuItems();
 
         $this->assertArrayHasKey('OCTOBER.TESTER.BLOG', $items);
@@ -51,7 +54,8 @@ class NavigationManagerTest extends TestCase
 
     public function testListSideMenuItems()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
 
         $items = $manager->listSideMenuItems();
         $this->assertEmpty($items);
@@ -81,7 +85,8 @@ class NavigationManagerTest extends TestCase
 
     public function testAddMainMenuItems()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
         $manager->addMainMenuItems('October.Tester', [
             'print' => [
                 'label' => 'Print',
@@ -106,7 +111,8 @@ class NavigationManagerTest extends TestCase
 
     public function testRemoveMainMenuItem()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
         $manager->addMainMenuItems('October.Tester', [
             'close' => [
                 'label' => 'Close',
@@ -126,7 +132,8 @@ class NavigationManagerTest extends TestCase
 
     public function testAddSideMenuItems()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
 
         $manager->addSideMenuItems('October.Tester', 'blog', [
             'foo' => [
@@ -164,7 +171,8 @@ class NavigationManagerTest extends TestCase
 
     public function testRemoveSideMenuItem()
     {
-        $manager = NavigationManager::instance();
+        /** @var NavigationManagerContract $manager */
+        $manager = resolve(NavigationManagerContract::class);
         $manager->addSideMenuItems('October.Tester', 'blog', [
             'bar' => [
                 'label' => 'Bar',

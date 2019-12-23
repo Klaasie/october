@@ -1,6 +1,8 @@
 <?php namespace System;
 
 use App;
+use Backend\Classes\Contracts\NavigationManagerContract;
+use Backend\Classes\NavigationManager;
 use System\Classes\ComposerManager;
 use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\ComposerManagerContract;
@@ -143,9 +145,9 @@ class ServiceProvider extends ModuleServiceProvider
             return new \Backend\Helpers\Backend;
         });
 
-        App::singleton('backend.menu', function () {
-            return \Backend\Classes\NavigationManager::instance();
-        });
+        App::singleton(NavigationManagerContract::class, NavigationManager::class);
+
+        App::singleton('backend.menu', NavigationManager::class);
 
         App::singleton('backend.auth', function () {
             return \Backend\Classes\AuthManager::instance();
