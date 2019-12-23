@@ -4,7 +4,6 @@ use BackendAuth;
 use Backend\Classes\FormField;
 use System\Classes\Contracts\MediaLibraryContract;
 use System\Classes\MediaLibrary;
-use Backend\Classes\FormField;
 use Backend\Classes\FormWidgetBase;
 
 /**
@@ -66,7 +65,9 @@ class MediaFinder extends FormWidgetBase
             'imageHeight'
         ]);
 
-        if ($this->formField->disabled) {
+        $user = BackendAuth::getUser();
+
+        if ($this->formField->disabled || !$user || !$user->hasAccess('media.manage_media')) {
             $this->previewMode = true;
         }
     }

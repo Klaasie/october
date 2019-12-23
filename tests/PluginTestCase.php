@@ -4,9 +4,12 @@ use Backend\Classes\AuthManager;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\UpdateManager;
 use October\Rain\Database\Model as ActiveRecord;
+use October\Tests\Concerns\InteractsWithAuthentication;
 
-abstract class PluginTestCase extends Illuminate\Foundation\Testing\TestCase
+abstract class PluginTestCase extends TestCase
 {
+    use InteractsWithAuthentication;
+
     /**
      * @var array Cache for storing which plugins have been loaded
      * and refreshed.
@@ -24,6 +27,12 @@ abstract class PluginTestCase extends Illuminate\Foundation\Testing\TestCase
 
         $app['cache']->setDefaultDriver('array');
         $app->setLocale('en');
+
+        $app->singleton('auth', function ($app) {
+            $app['auth.loaded'] = true;
+
+            return AuthManager::instance();
+        });
 
         /*
          * Store database in memory by default, if not specified otherwise

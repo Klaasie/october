@@ -9,9 +9,10 @@ use Event;
 use Config;
 use Request;
 use Response;
-use Closure;
 use Illuminate\Routing\Controller as ControllerBase;
 use October\Rain\Router\Helper as RouterHelper;
+use System\Classes\PluginManager;
+use Closure;
 
 /**
  * This is the master controller for all back-end pages.
