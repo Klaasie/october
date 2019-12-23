@@ -3,6 +3,8 @@
 use Illuminate\Mail\Message;
 use October\Rain\Parse\Markdown;
 use October\Rain\Parse\Twig;
+use System\Classes\Contracts\MailManagerContract;
+use System\Classes\Contracts\MarkupManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Models\MailPartial;
 use System\Models\MailTemplate;
@@ -17,7 +19,7 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
  * @package october\system
  * @author Alexey Bobkov, Samuel Georges
  */
-class MailManager
+class MailManager implements MailManagerContract
 {
     /**
      * @var Twig
@@ -66,18 +68,21 @@ class MailManager
 
     /**
      * MailManager constructor.
+     *
+     * @param Twig $twig
+     * @param Markdown $markdown
      */
-    public function __construct()
+    public function __construct(Twig $twig, Markdown $markdown)
     {
-        $this->twig = resolve('parse.twig');
-        $this->markdown = resolve('parse.markdown');
+        $this->twig = $twig;
+        $this->markdown = $markdown;
     }
 
 
     /**
      * {@inheritDoc}
      */
-    public static function instance(): PluginManagerContract
+    public static function instance(): MailManagerContract
     {
         return resolve(self::class);
     }
@@ -328,7 +333,8 @@ class MailManager
 
         $this->isTwigStarted = true;
 
-        $markupManager = MarkupManager::instance();
+        /** @var MarkupManagerContract $markupManager */
+        $markupManager = resolve(MarkupManagerContract::class);
         $markupManager->beginTransaction();
         $markupManager->registerTokenParsers([
             new MailPartialTokenParser
@@ -346,7 +352,8 @@ class MailManager
             return;
         }
 
-        $markupManager = MarkupManager::instance();
+        /** @var MarkupManagerContract $markupManager */
+        $markupManager = resolve(MarkupManagerContract::class);
         $markupManager->endTransaction();
 
         $this->isTwigStarted = false;
