@@ -15,6 +15,7 @@ use RecursiveIteratorIterator;
 use Schema;
 use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
+use System\Classes\Contracts\UpdateManagerContract;
 use Throwable;
 
 /**
@@ -813,7 +814,11 @@ class PluginManager implements PluginManagerContract
         /*
          * Rollback plugin
          */
-        UpdateManager::instance()->rollbackPlugin($id);
+        // Instantiating separately here since the UpdateManager and PluginManager can't depend on each other.
+        // We should probably look into the opportunity to separate logic to avoid this case.
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $updateManager->rollbackPlugin($id);
 
         /*
          * Delete from file system
@@ -828,8 +833,11 @@ class PluginManager implements PluginManagerContract
      */
     public function refreshPlugin($id)
     {
-        $manager = UpdateManager::instance();
-        $manager->rollbackPlugin($id);
-        $manager->updatePlugin($id);
+        // Instantiating separately here since the UpdateManager and PluginManager can't depend on each other.
+        // We should probably look into the opportunity to separate logic to avoid this case.
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $updateManager->rollbackPlugin($id);
+        $updateManager->updatePlugin($id);
     }
 }

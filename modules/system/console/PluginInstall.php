@@ -2,7 +2,7 @@
 
 use Illuminate\Console\Command;
 use System\Classes\Contracts\PluginManagerContract;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
@@ -35,7 +35,10 @@ class PluginInstall extends Command
     public function handle()
     {
         $pluginName = $this->argument('name');
-        $manager = UpdateManager::instance()->setNotesOutput($this->output);
+
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $manager = $updateManager->setNotesOutput($this->output);
 
         $pluginDetails = $manager->requestPluginDetails($pluginName);
 

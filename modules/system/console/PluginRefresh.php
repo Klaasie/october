@@ -2,7 +2,7 @@
 
 use Illuminate\Console\Command;
 use System\Classes\Contracts\PluginManagerContract;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
@@ -46,7 +46,9 @@ class PluginRefresh extends Command
             throw new \InvalidArgumentException(sprintf('Plugin "%s" not found.', $pluginName));
         }
 
-        $manager = UpdateManager::instance()->setNotesOutput($this->output);
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $manager = $updateManager->setNotesOutput($this->output);
 
         /*
          * Rollback plugin

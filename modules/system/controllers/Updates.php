@@ -3,6 +3,7 @@
 use Lang;
 use Html;
 use System\Classes\Contracts\PluginManagerContract;
+use System\Classes\Contracts\UpdateManagerContract;
 use Yaml;
 use File;
 use Flash;
@@ -15,7 +16,6 @@ use Cms\Classes\ThemeManager;
 use Backend\Classes\Controller;
 use System\Models\Parameter;
 use System\Models\PluginVersion;
-use System\Classes\UpdateManager;
 use System\Classes\SettingsManager;
 use ApplicationException;
 use Exception;
@@ -55,6 +55,11 @@ class Updates extends Controller
     private $pluginManager;
 
     /**
+     * @var UpdateManagerContract
+     */
+    private $updateManager;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -62,6 +67,7 @@ class Updates extends Controller
         parent::__construct();
 
         $this->pluginManager = resolve(PluginManagerContract::class);
+        $this->updateManager = resolve(UpdateManagerContract::class);
 
         $this->addJs('/modules/system/assets/js/updates/updates.js', 'core');
         $this->addCss('/modules/system/assets/css/updates/updates.css', 'core');
@@ -166,7 +172,7 @@ class Updates extends Controller
              * Fetch from server
              */
             if (get('fetch')) {
-                $fetchedContent = UpdateManager::instance()->requestPluginContent($code);
+                $fetchedContent = $this->updateManager->requestPluginContent($code);
                 $upgrades = array_get($fetchedContent, 'upgrade_guide_html');
             }
 
@@ -281,45 +287,44 @@ class Updates extends Controller
          */
         @set_time_limit(3600);
 
-        $manager = UpdateManager::instance();
         $stepCode = post('code');
 
         switch ($stepCode) {
             case 'downloadCore':
-                $manager->downloadCore(post('hash'));
+                $this->updateManager->downloadCore(post('hash'));
                 break;
 
             case 'extractCore':
-                $manager->extractCore();
+                $this->updateManager->extractCore();
                 break;
 
             case 'setBuild':
-                $manager->setBuild(post('build'), post('hash'));
+                $this->updateManager->setBuild(post('build'), post('hash'));
                 break;
 
             case 'downloadPlugin':
-                $manager->downloadPlugin(post('name'), post('hash'), post('install'));
+                $this->updateManager->downloadPlugin(post('name'), post('hash'), post('install'));
                 break;
 
             case 'downloadTheme':
-                $manager->downloadTheme(post('name'), post('hash'));
+                $this->updateManager->downloadTheme(post('name'), post('hash'));
                 break;
 
             case 'extractPlugin':
-                $manager->extractPlugin(post('name'), post('hash'));
+                $this->updateManager->extractPlugin(post('name'), post('hash'));
                 break;
 
             case 'extractTheme':
-                $manager->extractTheme(post('name'), post('hash'));
+                $this->updateManager->extractTheme(post('name'), post('hash'));
                 break;
 
             case 'completeUpdate':
-                $manager->update();
+                $this->updateManager->update();
                 Flash::success(Lang::get('system::lang.updates.update_success'));
                 return Redirect::refresh();
 
             case 'completeInstall':
-                $manager->update();
+                $this->updateManager->update();
                 Flash::success(Lang::get('system::lang.install.install_success'));
                 return Redirect::refresh();
         }
@@ -343,8 +348,7 @@ class Updates extends Controller
     public function onCheckForUpdates()
     {
         try {
-            $manager = UpdateManager::instance();
-            $result = $manager->requestUpdateList();
+            $result = $this->updateManager->requestUpdateList();
 
             $result = $this->processUpdateLists($result);
             $result = $this->processImportantUpdates($result);
@@ -440,8 +444,7 @@ class Updates extends Controller
     public function onForceUpdate()
     {
         try {
-            $manager = UpdateManager::instance();
-            $result = $manager->requestUpdateList(true);
+            $result = $this->updateManager->requestUpdateList(true);
 
             $coreHash = array_get($result, 'core.hash', false);
             $coreBuild = array_get($result, 'core.build', false);
@@ -683,8 +686,7 @@ class Updates extends Controller
                 throw new ApplicationException(Lang::get('system::lang.project.id.missing'));
             }
 
-            $manager = UpdateManager::instance();
-            $result = $manager->requestProjectDetails($projectId);
+            $result = $this->updateManager->requestProjectDetails($projectId);
 
             Parameter::set([
                 'system::project.id'    => $projectId,
@@ -722,7 +724,7 @@ class Updates extends Controller
     public function onLoadChangelog()
     {
         try {
-            $fetchedContent = UpdateManager::instance()->requestChangelog();
+            $fetchedContent = $this->updateManager->requestChangelog();
 
             $changelog = array_get($fetchedContent, 'history');
 
@@ -753,8 +755,7 @@ class Updates extends Controller
                 throw new ApplicationException(Lang::get('system::lang.install.missing_plugin_name'));
             }
 
-            $manager = UpdateManager::instance();
-            $result = $manager->requestPluginDetails($code);
+            $result = $this->updateManager->requestPluginDetails($code);
 
             if (!isset($result['code']) || !isset($result['hash'])) {
                 throw new ApplicationException(Lang::get('system::lang.server.response_invalid'));
@@ -879,8 +880,7 @@ class Updates extends Controller
                 throw new ApplicationException(Lang::get('system::lang.install.missing_theme_name'));
             }
 
-            $manager = UpdateManager::instance();
-            $result = $manager->requestThemeDetails($code);
+            $result = $this->updateManager->requestThemeDetails($code);
 
             if (!isset($result['code']) || !isset($result['hash'])) {
                 throw new ApplicationException(Lang::get('system::lang.server.response_invalid'));
@@ -938,14 +938,13 @@ class Updates extends Controller
         $searchType = get('search', 'plugins');
         $serverUri = $searchType == 'plugins' ? 'plugin/search' : 'theme/search';
 
-        $manager = UpdateManager::instance();
-        return $manager->requestServerData($serverUri, ['query' => get('query')]);
+        return $this->updateManager->requestServerData($serverUri, ['query' => get('query')]);
     }
 
     public function onGetPopularPlugins()
     {
         $installed = $this->getInstalledPlugins();
-        $popular = UpdateManager::instance()->requestPopularProducts('plugin');
+        $popular = $this->updateManager->requestPopularProducts('plugin');
         $popular = $this->filterPopularProducts($popular, $installed);
 
         return ['result' => $popular];
@@ -954,7 +953,7 @@ class Updates extends Controller
     public function onGetPopularThemes()
     {
         $installed = $this->getInstalledThemes();
-        $popular = UpdateManager::instance()->requestPopularProducts('theme');
+        $popular = $this->updateManager->requestPopularProducts('theme');
         $popular = $this->filterPopularProducts($popular, $installed);
 
         return ['result' => $popular];
@@ -963,15 +962,13 @@ class Updates extends Controller
     protected function getInstalledPlugins()
     {
         $installed = PluginVersion::lists('code');
-        $manager = UpdateManager::instance();
-        return $manager->requestProductDetails($installed, 'plugin');
+        return $this->updateManager->requestProductDetails($installed, 'plugin');
     }
 
     protected function getInstalledThemes()
     {
         $history = Parameter::get('system::theme.history', []);
-        $manager = UpdateManager::instance();
-        $installed = $manager->requestProductDetails(array_keys($history), 'theme');
+        $installed = $this->updateManager->requestProductDetails(array_keys($history), 'theme');
 
         /*
          * Splice in the directory names

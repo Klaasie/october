@@ -2,7 +2,7 @@
 
 use Str;
 use Illuminate\Console\Command;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -34,7 +34,9 @@ class OctoberUpdate extends Command
     public function handle()
     {
         $this->output->writeln('<info>Updating October...</info>');
-        $manager = UpdateManager::instance()->setNotesOutput($this->output);
+        /** @var UpdateManagerContract $updateManager */
+        $updateManager = resolve(UpdateManagerContract::class);
+        $manager = $updateManager->setNotesOutput($this->output);
         $forceUpdate = $this->option('force');
 
         /*

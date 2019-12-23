@@ -7,7 +7,7 @@ use PDO;
 use File;
 use Config;
 use Backend\Database\Seeds\SeedSetupAdmin;
-use System\Classes\UpdateManager;
+use System\Classes\Contracts\UpdateManagerContract;
 use October\Rain\Config\ConfigWriter;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
@@ -304,7 +304,9 @@ class OctoberInstall extends Command
         try {
             Db::purge();
 
-            UpdateManager::instance()
+            /** @var UpdateManagerContract $updateManager */
+            $updateManager = resolve(UpdateManagerContract::class);
+            $updateManager
                 ->setNotesOutput($this->output)
                 ->update()
             ;
