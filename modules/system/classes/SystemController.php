@@ -5,6 +5,7 @@ use ApplicationException;
 use Illuminate\Routing\Controller as ControllerBase;
 use Exception;
 use Response;
+use System\Classes\Contracts\CombineAssetsContract;
 
 /**
  * The is the master controller for system related routing.
@@ -32,7 +33,8 @@ class SystemController extends ControllerBase
 
             $cacheId = $parts[0];
 
-            $combiner = CombineAssets::instance();
+            /** @var CombineAssetsContract $combiner */
+            $combiner = resolve(CombineAssetsContract::class);
 
             return $combiner->getContents($cacheId);
         }

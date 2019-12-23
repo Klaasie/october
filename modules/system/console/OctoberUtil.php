@@ -7,6 +7,7 @@ use Config;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\UpdateManagerContract;
 use System\Classes\CombineAssets;
 use Exception;
@@ -163,7 +164,8 @@ class OctoberUtil extends Command
         $this->comment('Compiling registered asset bundles...');
 
         Config::set('cms.enableAssetMinify', !$this->option('debug'));
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
         $bundles = $combiner->getBundles($type);
 
         if (!$bundles) {

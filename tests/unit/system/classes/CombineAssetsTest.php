@@ -2,6 +2,7 @@
 
 use Cms\Classes\Theme;
 use System\Classes\CombineAssets;
+use System\Classes\Contracts\CombineAssetsContract;
 
 class CombineAssetsTest extends TestCase
 {
@@ -18,7 +19,8 @@ class CombineAssetsTest extends TestCase
 
     public function testCombiner()
     {
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
 
         /*
          * Supported file extensions should exist
@@ -38,7 +40,8 @@ class CombineAssetsTest extends TestCase
 
     public function testCombine()
     {
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
 
         $url = $combiner->combine(
             [
@@ -67,7 +70,8 @@ class CombineAssetsTest extends TestCase
         $sampleStore = ['version' => 12345678];
         $samplePath = '/tests/fixtures/Cms/themes/test';
 
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
         $value = self::callProtectedMethod($combiner, 'putCache', [$sampleId, $sampleStore]);
 
         $this->assertTrue($value);
@@ -75,7 +79,8 @@ class CombineAssetsTest extends TestCase
 
     public function testGetTargetPath()
     {
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
 
         $value = self::callProtectedMethod($combiner, 'getTargetPath', ['/combine']);
         $this->assertEquals('combine/', $value);
@@ -89,7 +94,8 @@ class CombineAssetsTest extends TestCase
         $sampleResources = ['assets/css/style1.css', 'assets/css/style2.css'];
         $samplePath = base_path().'/tests/fixtures/cms/themes/test';
 
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
         self::setProtectedProperty($combiner, 'localPath', $samplePath);
 
         $value = self::callProtectedMethod($combiner, 'getCacheKey', [$sampleResources]);
@@ -98,7 +104,8 @@ class CombineAssetsTest extends TestCase
 
     public function testResetCache()
     {
-        $combiner = CombineAssets::instance();
+        /** @var CombineAssetsContract $combiner */
+        $combiner = resolve(CombineAssetsContract::class);
         $this->assertNull($combiner->resetCache());
     }
 }

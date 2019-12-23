@@ -2,6 +2,7 @@
 
 use App;
 use System\Classes\ComposerManager;
+use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\Contracts\UpdateManagerContract;
@@ -143,6 +144,7 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton(ComposerManagerContract::class, ComposerManager::class);
         App::singleton(UpdateManagerContract::class, UpdateManager::class);
         App::singleton(VersionManagerContract::class, VersionManager::class);
+        App::singleton(CombineAssetsContract::class, CombineAssets::class);
     }
 
     /**
