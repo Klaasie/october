@@ -95,11 +95,6 @@ class CombineAssets implements CombineAssetsContract
     private $urlGenerator;
 
     /**
-     * @var CacheRepository
-     */
-    private $cache;
-
-    /**
      * @var ResponseFactory
      */
     private $response;
@@ -178,7 +173,6 @@ class CombineAssets implements CombineAssetsContract
         Translator $translator,
         Request $request,
         UrlGenerator $urlGenerator,
-        CacheRepository $cache,
         ResponseFactory $response
     ) {
         $this->app = $app;
@@ -189,7 +183,6 @@ class CombineAssets implements CombineAssetsContract
         $this->events = resolve('events');
         $this->router = resolve('router');
         $this->urlGenerator = $urlGenerator;
-        $this->cache = $cache;
         $this->response = $response;
 
         /*
@@ -844,13 +837,16 @@ class CombineAssets implements CombineAssetsContract
     {
         $cacheKey = 'combiner.'.$cacheKey;
 
-        if ($this->cache->has($cacheKey)) {
+        /** @var CacheRepository $cache */
+        $cache = resolve(CacheRepository::class);
+
+        if ($cache->has($cacheKey)) {
             return false;
         }
 
         $this->putCacheIndex($cacheKey);
 
-        $this->cache->forever($cacheKey, base64_encode(serialize($cacheInfo)));
+        $cache->forever($cacheKey, base64_encode(serialize($cacheInfo)));
 
         return true;
     }
@@ -865,11 +861,14 @@ class CombineAssets implements CombineAssetsContract
     {
         $cacheKey = 'combiner.'.$cacheKey;
 
-        if (!$this->cache->has($cacheKey)) {
+        /** @var CacheRepository $cache */
+        $cache = resolve(CacheRepository::class);
+
+        if (!$cache->has($cacheKey)) {
             return false;
         }
 
-        return @unserialize(@base64_decode($this->cache->get($cacheKey)));
+        return @unserialize(@base64_decode($cache->get($cacheKey)));
     }
 
     /**
@@ -922,14 +921,17 @@ class CombineAssets implements CombineAssetsContract
      */
     public function forgetCache()
     {
-        if ($this->cache->has('combiner.index')) {
-            $index = (array) @unserialize(@base64_decode($this->cache->get('combiner.index'))) ?: [];
+        /** @var CacheRepository $cache */
+        $cache = resolve(CacheRepository::class);
+
+        if ($cache->has('combiner.index')) {
+            $index = (array) @unserialize(@base64_decode($cache->get('combiner.index'))) ?: [];
 
             foreach ($index as $cacheKey) {
-                $this->cache->forget($cacheKey);
+                $cache->forget($cacheKey);
             }
 
-            $this->cache->forget('combiner.index');
+            $cache->forget('combiner.index');
         }
 
         CacheHelper::instance()->clearCombiner();
@@ -945,8 +947,11 @@ class CombineAssets implements CombineAssetsContract
     {
         $index = [];
 
-        if ($this->cache->has('combiner.index')) {
-            $index = (array) @unserialize(@base64_decode($this->cache->get('combiner.index'))) ?: [];
+        /** @var CacheRepository $cache */
+        $cache = resolve(CacheRepository::class);
+
+        if ($cache->has('combiner.index')) {
+            $index = (array) @unserialize(@base64_decode($cache->get('combiner.index'))) ?: [];
         }
 
         if (in_array($cacheKey, $index)) {
@@ -955,7 +960,7 @@ class CombineAssets implements CombineAssetsContract
 
         $index[] = $cacheKey;
 
-        $this->cache->forever('combiner.index', base64_encode(serialize($index)));
+        $cache->forever('combiner.index', base64_encode(serialize($index)));
 
         return true;
     }
