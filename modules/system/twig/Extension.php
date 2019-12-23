@@ -1,10 +1,10 @@
 <?php namespace System\Twig;
 
+use System\Classes\Contracts\MarkupManagerContract;
 use Url;
 use Twig\Extension\AbstractExtension as TwigExtension;
 use Twig\TwigFilter as TwigSimpleFilter;
 use System\Classes\MediaLibrary;
-use System\Classes\MarkupManager;
 
 /**
  * The System Twig extension class implements common Twig functions and filters.
@@ -15,7 +15,7 @@ use System\Classes\MarkupManager;
 class Extension extends TwigExtension
 {
     /**
-     * @var \System\Classes\MarkupManager A reference to the markup manager instance.
+     * @var MarkupManagerContract A reference to the markup manager instance.
      */
     protected $markupManager;
 
@@ -24,7 +24,7 @@ class Extension extends TwigExtension
      */
     public function __construct()
     {
-        $this->markupManager = MarkupManager::instance();
+        $this->markupManager = resolve(MarkupManagerContract::class);
     }
 
     /**

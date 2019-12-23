@@ -5,6 +5,7 @@ use System\Classes\ComposerManager;
 use System\Classes\Contracts\CombineAssetsContract;
 use System\Classes\Contracts\ComposerManagerContract;
 use System\Classes\Contracts\MailManagerContract;
+use System\Classes\Contracts\MarkupManagerContract;
 use System\Classes\Contracts\PluginManagerContract;
 use System\Classes\Contracts\UpdateManagerContract;
 use System\Classes\Contracts\VersionManagerContract;
@@ -153,6 +154,7 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton(VersionManagerContract::class, VersionManager::class);
         App::singleton(CombineAssetsContract::class, CombineAssets::class);
         App::singleton(MailManagerContract::class, MailManager::class);
+        App::singleton(MarkupManagerContract::class, MarkupManager::class);
     }
 
     /**
@@ -191,48 +193,48 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerMarkupTags()
     {
-        MarkupManager::instance()->registerCallback(function ($manager) {
-            $manager->registerFunctions([
-                // Functions
-                'input'          => 'input',
-                'post'           => 'post',
-                'get'            => 'get',
-                'link_to'        => 'link_to',
-                'link_to_asset'  => 'link_to_asset',
-                'link_to_route'  => 'link_to_route',
-                'link_to_action' => 'link_to_action',
-                'asset'          => 'asset',
-                'action'         => 'action',
-                'url'            => 'url',
-                'route'          => 'route',
-                'secure_url'     => 'secure_url',
-                'secure_asset'   => 'secure_asset',
+        /** @var MarkupManagerContract $markupManager */
+        $markupManager = resolve(MarkupManagerContract::class);
+        $markupManager->registerFunctions([
+            // Functions
+            'input'          => 'input',
+            'post'           => 'post',
+            'get'            => 'get',
+            'link_to'        => 'link_to',
+            'link_to_asset'  => 'link_to_asset',
+            'link_to_route'  => 'link_to_route',
+            'link_to_action' => 'link_to_action',
+            'asset'          => 'asset',
+            'action'         => 'action',
+            'url'            => 'url',
+            'route'          => 'route',
+            'secure_url'     => 'secure_url',
+            'secure_asset'   => 'secure_asset',
 
-                // Classes
-                'str_*'          => ['Str', '*'],
-                'url_*'          => ['Url', '*'],
-                'html_*'         => ['Html', '*'],
-                'form_*'         => ['Form', '*'],
-                'form_macro'     => ['Form', '__call']
-            ]);
+            // Classes
+            'str_*'          => ['Str', '*'],
+            'url_*'          => ['Url', '*'],
+            'html_*'         => ['Html', '*'],
+            'form_*'         => ['Form', '*'],
+            'form_macro'     => ['Form', '__call']
+        ]);
 
-            $manager->registerFilters([
-                // Classes
-                'slug'           => ['Str', 'slug'],
-                'plural'         => ['Str', 'plural'],
-                'singular'       => ['Str', 'singular'],
-                'finish'         => ['Str', 'finish'],
-                'snake'          => ['Str', 'snake'],
-                'camel'          => ['Str', 'camel'],
-                'studly'         => ['Str', 'studly'],
-                'trans'          => ['Lang', 'get'],
-                'transchoice'    => ['Lang', 'choice'],
-                'md'             => ['Markdown', 'parse'],
-                'md_safe'        => ['Markdown', 'parseSafe'],
-                'time_since'     => ['System\Helpers\DateTime', 'timeSince'],
-                'time_tense'     => ['System\Helpers\DateTime', 'timeTense'],
-            ]);
-        });
+        $markupManager->registerFilters([
+            // Classes
+            'slug'           => ['Str', 'slug'],
+            'plural'         => ['Str', 'plural'],
+            'singular'       => ['Str', 'singular'],
+            'finish'         => ['Str', 'finish'],
+            'snake'          => ['Str', 'snake'],
+            'camel'          => ['Str', 'camel'],
+            'studly'         => ['Str', 'studly'],
+            'trans'          => ['Lang', 'get'],
+            'transchoice'    => ['Lang', 'choice'],
+            'md'             => ['Markdown', 'parse'],
+            'md_safe'        => ['Markdown', 'parseSafe'],
+            'time_since'     => ['System\Helpers\DateTime', 'timeSince'],
+            'time_tense'     => ['System\Helpers\DateTime', 'timeTense'],
+        ]);
     }
 
     /**

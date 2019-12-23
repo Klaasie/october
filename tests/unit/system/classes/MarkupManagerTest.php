@@ -1,6 +1,6 @@
 <?php
 
-use System\Classes\MarkupManager;
+use System\Classes\Contracts\MarkupManagerContract;
 
 class MarkupManagerTest extends TestCase
 {
@@ -18,7 +18,8 @@ class MarkupManagerTest extends TestCase
 
     public function testIsWildCallable()
     {
-        $manager = MarkupManager::instance();
+        /** @var MarkupManagerContract $manager */
+        $manager = resolve(MarkupManagerContract::class);
 
         /*
          * Negatives
