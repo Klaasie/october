@@ -1,5 +1,6 @@
 <?php
 
+use Backend\Classes\Contracts\WidgetManagerContract;
 use Backend\Classes\Controller;
 use Backend\Classes\WidgetManager;
 
@@ -7,7 +8,8 @@ class WidgetManagerTest extends TestCase
 {
     public function testListFormWidgets()
     {
-        $manager = WidgetManager::instance();
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
         $widgets = $manager->listFormWidgets();
 
         $this->assertArrayHasKey('TestVendor\Test\FormWidgets\Sample', $widgets);
@@ -16,7 +18,8 @@ class WidgetManagerTest extends TestCase
 
     public function testIfWidgetsCanBeExtended()
     {
-        $manager = WidgetManager::instance();
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
         $manager->registerReportWidget('Acme\Fake\ReportWidget\HelloWorld', [
             'name' => 'Hello World Test',
             'context' => 'dashboard'
@@ -28,7 +31,8 @@ class WidgetManagerTest extends TestCase
 
     public function testIfWidgetsCanBeRemoved()
     {
-        $manager = WidgetManager::instance();
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
         $manager->registerReportWidget('Acme\Fake\ReportWidget\HelloWorld', [
             'name' => 'Hello World Test',
             'context' => 'dashboard'

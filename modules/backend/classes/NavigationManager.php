@@ -88,6 +88,7 @@ class NavigationManager implements NavigationManagerContract
      * @param PluginManagerContract $pluginManager
      * @param Log $log
      * @param Repository $config
+     * @throws SystemException
      */
     public function __construct(PluginManagerContract $pluginManager, Log $log, Repository $config)
     {
@@ -99,7 +100,7 @@ class NavigationManager implements NavigationManagerContract
     }
 
     /**
-     * Static combine method
+     * Static instance method
      * Kept this one to remain backwards compatible.
      *
      * @deprecated V1.0.xxx Instead of using this method,

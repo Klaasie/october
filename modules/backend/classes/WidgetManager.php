@@ -1,10 +1,11 @@
 <?php namespace Backend\Classes;
 
-use Str;
-use BackendAuth;
+use Backend\Classes\Contracts\NavigationManagerContract;
+use Backend\Classes\Contracts\WidgetManagerContract;
+use Illuminate\Contracts\Events\Dispatcher;
+use October\Rain\Exception\SystemException;
+use October\Rain\Support\Str;
 use System\Classes\Contracts\PluginManagerContract;
-use SystemException;
-use Event;
 
 /**
  * Widget manager
@@ -12,10 +13,8 @@ use Event;
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
  */
-class WidgetManager
+class WidgetManager implements WidgetManagerContract
 {
-    use \October\Rain\Support\Traits\Singleton;
-
     /**
      * @var array An array of form widgets. Stored in the form of ['FormWidgetClass' => $formWidgetInfo].
      */
@@ -47,11 +46,36 @@ class WidgetManager
     protected $pluginManager;
 
     /**
-     * Initialize this singleton.
+     * @var AuthManager
      */
-    protected function init()
+    private $authManager;
+
+    /**
+     * @var Dispatcher
+     */
+    private $dispatcher;
+
+    /**
+     * WidgetManager constructor.
+     * @param PluginManagerContract $pluginManager
+     */
+    public function __construct(PluginManagerContract $pluginManager)
     {
-        $this->pluginManager = resolve(PluginManagerContract::class);
+        $this->pluginManager = $pluginManager;
+        $this->authManager = resolve('backend.auth');
+        $this->dispatcher = resolve('events');
+    }
+
+    /**
+     * Static instance method
+     * Kept this one to remain backwards compatible.
+     *
+     * @deprecated V1.0.xxx Instead of using this method,
+     *             rework your logic to resolve the class through dependency injection.
+     */
+    public static function instance(): NavigationManagerContract
+    {
+        return resolve(self::class);
     }
 
     //
@@ -59,10 +83,9 @@ class WidgetManager
     //
 
     /**
-     * Returns a list of registered form widgets.
-     * @return array Array keys are class names.
+     * {@inheritDoc}
      */
-    public function listFormWidgets()
+    public function listFormWidgets(): array
     {
         if ($this->formWidgets === null) {
             $this->formWidgets = [];
@@ -94,10 +117,7 @@ class WidgetManager
     }
 
     /**
-     * Registers a single form widget.
-     * @param string $className Widget class name.
-     * @param array $widgetInfo Registration information, can contain a `code` key.
-     * @return void
+     * {@inheritDoc}
      */
     public function registerFormWidget($className, $widgetInfo = null)
     {
@@ -116,12 +136,7 @@ class WidgetManager
     }
 
     /**
-     * Manually registers form widget for consideration. Usage:
-     *
-     *     WidgetManager::registerFormWidgets(function ($manager) {
-     *         $manager->registerFormWidget('Backend\FormWidgets\CodeEditor', 'codeeditor');
-     *     });
-     *
+     * {@inheritDoc}
      */
     public function registerFormWidgets(callable $definitions)
     {
@@ -131,10 +146,11 @@ class WidgetManager
     /**
      * Returns a class name from a form widget code
      * Normalizes a class name or converts an code to its class name.
+     *
      * @param string $name Class name or form widget code.
      * @return string The class name resolved, or the original name.
      */
-    public function resolveFormWidget($name)
+    public function resolveFormWidget($name): string
     {
         if ($this->formWidgets === null) {
             $this->listFormWidgets();
@@ -159,10 +175,9 @@ class WidgetManager
     //
 
     /**
-     * Returns a list of registered report widgets.
-     * @return array Array keys are class names.
+     * {@inheritDoc}
      */
-    public function listReportWidgets()
+    public function listReportWidgets(): array
     {
         if ($this->reportWidgets === null) {
             $this->reportWidgets = [];
@@ -205,14 +220,12 @@ class WidgetManager
          *     });
          *
          */
-        Event::fire('system.reportwidgets.extendItems', [$this]);
+        $this->dispatcher->fire('system.reportwidgets.extendItems', [$this]);
 
-        $user = BackendAuth::getUser();
+        $user = $this->authManager->getUser();
         foreach ($this->reportWidgets as $widget => $config) {
-            if (!empty($config['permissions'])) {
-                if (!$user->hasAccess($config['permissions'], false)) {
-                    unset($this->reportWidgets[$widget]);
-                }
+            if (!empty($config['permissions']) && !$user->hasAccess($config['permissions'], false)) {
+                unset($this->reportWidgets[$widget]);
             }
         }
 
@@ -220,16 +233,15 @@ class WidgetManager
     }
 
     /**
-     * Returns the raw array of registered report widgets.
-     * @return array Array keys are class names.
+     * {@inheritDoc}
      */
-    public function getReportWidgets()
+    public function getReportWidgets(): array
     {
         return $this->reportWidgets;
     }
 
-    /*
-     * Registers a single report widget.
+    /**
+     * {@inheritDoc}
      */
     public function registerReportWidget($className, $widgetInfo)
     {
@@ -237,15 +249,7 @@ class WidgetManager
     }
 
     /**
-     * Manually registers report widget for consideration. Usage:
-     *
-     *     WidgetManager::registerReportWidgets(function ($manager) {
-     *         $manager->registerReportWidget('RainLab\GoogleAnalytics\ReportWidgets\TrafficOverview', [
-     *             'name' => 'Google Analytics traffic overview',
-     *             'context' => 'dashboard'
-     *         ]);
-     *     });
-     *
+     * {@inheritDoc}
      */
     public function registerReportWidgets(callable $definitions)
     {
@@ -253,9 +257,7 @@ class WidgetManager
     }
 
     /**
-     * Remove a registered ReportWidget.
-     * @param string $className Widget class name.
-     * @return void
+     * {@inheritDoc}
      */
     public function removeReportWidget($className)
     {

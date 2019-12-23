@@ -1,11 +1,11 @@
 <?php namespace Backend\Widgets;
 
+use Backend\Classes\Contracts\WidgetManagerContract;
 use Lang;
 use Form as FormHelper;
 use Backend\Classes\FormTabs;
 use Backend\Classes\FormField;
 use Backend\Classes\WidgetBase;
-use Backend\Classes\WidgetManager;
 use Backend\Classes\FormWidgetBase;
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
@@ -117,7 +117,7 @@ class Form extends WidgetBase
     public $previewMode = false;
 
     /**
-     * @var \Backend\Classes\WidgetManager
+     * @var WidgetManagerContract
      */
     protected $widgetManager;
 
@@ -137,7 +137,7 @@ class Form extends WidgetBase
             'isNested',
         ]);
 
-        $this->widgetManager = WidgetManager::instance();
+        $this->widgetManager = resolve(WidgetManagerContract::class);
         $this->allTabs = (object) $this->allTabs;
         $this->validateModel();
     }

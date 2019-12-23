@@ -1,12 +1,12 @@
 <?php namespace Backend\Widgets;
 
+use Backend\Classes\Contracts\WidgetManagerContract;
 use File;
 use Lang;
 use Flash;
 use Request;
 use BackendAuth;
 use Backend\Classes\WidgetBase;
-use Backend\Classes\WidgetManager;
 use Backend\Models\UserPreference;
 use System\Models\Parameter as SystemParameters;
 use ApplicationException;
@@ -74,6 +74,11 @@ class ReportContainer extends WidgetBase
     protected $reportsDefined = false;
 
     /**
+     * @var WidgetManagerContract
+     */
+    private $widgetManager;
+
+    /**
      * Constructor.
      */
     public function __construct($controller, $configuration = null)
@@ -93,6 +98,8 @@ class ReportContainer extends WidgetBase
         }
 
         parent::__construct($controller, $configuration);
+
+        $this->widgetManager = resolve(WidgetManagerContract::class);
 
         $this->fillFromConfig();
         $this->bindToController();
@@ -187,7 +194,7 @@ class ReportContainer extends WidgetBase
         }
 
         $this->vars['sizes'] = $sizes;
-        $this->vars['widgets'] = WidgetManager::instance()->listReportWidgets();
+        $this->vars['widgets'] = $this->widgetManager->listReportWidgets();
 
         return $this->makePartial('new_widget_popup');
     }
@@ -339,7 +346,7 @@ class ReportContainer extends WidgetBase
         $configuration['alias'] = $alias;
 
         $className = $widgetInfo['class'];
-        $availableReportWidgets = array_keys(WidgetManager::instance()->listReportWidgets());
+        $availableReportWidgets = array_keys($this->widgetManager->listReportWidgets());
         if (!class_exists($className) || !in_array($className, $availableReportWidgets)) {
             return;
         }

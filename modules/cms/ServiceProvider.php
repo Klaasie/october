@@ -1,12 +1,12 @@
 <?php namespace Cms;
 
 use App;
+use Backend\Classes\Contracts\WidgetManagerContract;
 use Event;
 use Backend;
 use BackendMenu;
 use BackendAuth;
 use Backend\Models\UserRole;
-use Backend\Classes\WidgetManager;
 use October\Rain\Support\ModuleServiceProvider;
 use System\Classes\Contracts\SettingsManagerContract;
 use System\Classes\SettingsManager;
@@ -176,12 +176,12 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendReportWidgets()
     {
-        WidgetManager::instance()->registerReportWidgets(function ($manager) {
-            $manager->registerReportWidget(\Cms\ReportWidgets\ActiveTheme::class, [
-                'label'   => 'cms::lang.dashboard.active_theme.widget_title_default',
-                'context' => 'dashboard'
-            ]);
-        });
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
+        $manager->registerReportWidget(\Cms\ReportWidgets\ActiveTheme::class, [
+            'label'   => 'cms::lang.dashboard.active_theme.widget_title_default',
+            'context' => 'dashboard'
+        ]);
     }
 
     /*
@@ -241,9 +241,9 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendWidgets()
     {
-        WidgetManager::instance()->registerFormWidgets(function ($manager) {
-            $manager->registerFormWidget(FormWidgets\Components::class);
-        });
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
+        $manager->registerFormWidget(FormWidgets\Components::class);
     }
 
     /*
@@ -251,7 +251,7 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendSettings()
     {
-        /** @var SettingsManagerContracts $manager */
+        /** @var SettingsManagerContract $manager */
         $manager = resolve(SettingsManagerContract::class);
         $manager->registerSettingItems('October.Cms', [
             'theme' => [

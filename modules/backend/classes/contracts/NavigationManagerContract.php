@@ -1,12 +1,10 @@
-<?php
+<?php namespace Backend\Classes\Contracts;
 
-
-namespace Backend\Classes\Contracts;
-
-
-use Backend\Models\User;
 use October\Rain\Exception\SystemException;
 
+/**
+ * Interface NavigationManagerContract
+ */
 interface NavigationManagerContract
 {
     /**

@@ -2,6 +2,7 @@
 
 use App;
 use Backend;
+use Backend\Classes\Contracts\WidgetManagerContract;
 use BackendMenu;
 use BackendAuth;
 use Backend\Classes\WidgetManager;
@@ -21,6 +22,8 @@ class ServiceProvider extends ModuleServiceProvider
     public function register()
     {
         parent::register('backend');
+
+        $this->app->singleton(WidgetManagerContract::class, WidgetManager::class);
 
         $this->registerMailer();
         $this->registerAssetBundles();
@@ -122,12 +125,12 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendReportWidgets()
     {
-        WidgetManager::instance()->registerReportWidgets(function ($manager) {
-            $manager->registerReportWidget(\Backend\ReportWidgets\Welcome::class, [
-                'label'   => 'backend::lang.dashboard.welcome.widget_title_default',
-                'context' => 'dashboard'
-            ]);
-        });
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
+        $manager->registerReportWidget(\Backend\ReportWidgets\Welcome::class, [
+            'label'   => 'backend::lang.dashboard.welcome.widget_title_default',
+            'context' => 'dashboard'
+        ]);
     }
 
     /*
@@ -178,22 +181,22 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendWidgets()
     {
-        WidgetManager::instance()->registerFormWidgets(function ($manager) {
-            $manager->registerFormWidget('Backend\FormWidgets\CodeEditor', 'codeeditor');
-            $manager->registerFormWidget('Backend\FormWidgets\RichEditor', 'richeditor');
-            $manager->registerFormWidget('Backend\FormWidgets\MarkdownEditor', 'markdown');
-            $manager->registerFormWidget('Backend\FormWidgets\FileUpload', 'fileupload');
-            $manager->registerFormWidget('Backend\FormWidgets\Relation', 'relation');
-            $manager->registerFormWidget('Backend\FormWidgets\DatePicker', 'datepicker');
-            $manager->registerFormWidget('Backend\FormWidgets\TimePicker', 'timepicker');
-            $manager->registerFormWidget('Backend\FormWidgets\ColorPicker', 'colorpicker');
-            $manager->registerFormWidget('Backend\FormWidgets\DataTable', 'datatable');
-            $manager->registerFormWidget('Backend\FormWidgets\RecordFinder', 'recordfinder');
-            $manager->registerFormWidget('Backend\FormWidgets\Repeater', 'repeater');
-            $manager->registerFormWidget('Backend\FormWidgets\TagList', 'taglist');
-            $manager->registerFormWidget('Backend\FormWidgets\MediaFinder', 'mediafinder');
-            $manager->registerFormWidget('Backend\FormWidgets\NestedForm', 'nestedform');
-        });
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
+        $manager->registerFormWidget('Backend\FormWidgets\CodeEditor', 'codeeditor');
+        $manager->registerFormWidget('Backend\FormWidgets\RichEditor', 'richeditor');
+        $manager->registerFormWidget('Backend\FormWidgets\MarkdownEditor', 'markdown');
+        $manager->registerFormWidget('Backend\FormWidgets\FileUpload', 'fileupload');
+        $manager->registerFormWidget('Backend\FormWidgets\Relation', 'relation');
+        $manager->registerFormWidget('Backend\FormWidgets\DatePicker', 'datepicker');
+        $manager->registerFormWidget('Backend\FormWidgets\TimePicker', 'timepicker');
+        $manager->registerFormWidget('Backend\FormWidgets\ColorPicker', 'colorpicker');
+        $manager->registerFormWidget('Backend\FormWidgets\DataTable', 'datatable');
+        $manager->registerFormWidget('Backend\FormWidgets\RecordFinder', 'recordfinder');
+        $manager->registerFormWidget('Backend\FormWidgets\Repeater', 'repeater');
+        $manager->registerFormWidget('Backend\FormWidgets\TagList', 'taglist');
+        $manager->registerFormWidget('Backend\FormWidgets\MediaFinder', 'mediafinder');
+        $manager->registerFormWidget('Backend\FormWidgets\NestedForm', 'nestedform');
     }
 
     /*

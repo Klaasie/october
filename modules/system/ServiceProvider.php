@@ -2,6 +2,7 @@
 
 use App;
 use Backend\Classes\Contracts\NavigationManagerContract;
+use Backend\Classes\Contracts\WidgetManagerContract;
 use Backend\Classes\NavigationManager;
 use System\Classes\ComposerManager;
 use System\Classes\Contracts\CombineAssetsContract;
@@ -438,12 +439,12 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerBackendReportWidgets()
     {
-        WidgetManager::instance()->registerReportWidgets(function ($manager) {
-            $manager->registerReportWidget(\System\ReportWidgets\Status::class, [
-                'label'   => 'backend::lang.dashboard.status.widget_title_default',
-                'context' => 'dashboard'
-            ]);
-        });
+        /** @var WidgetManagerContract $manager */
+        $manager = resolve(WidgetManagerContract::class);
+        $manager->registerReportWidget(\System\ReportWidgets\Status::class, [
+            'label'   => 'backend::lang.dashboard.status.widget_title_default',
+            'context' => 'dashboard'
+        ]);
     }
 
     /*
