@@ -16,6 +16,7 @@ use System\Classes\Contracts\UpdateManagerContract;
 use Http;
 use Schema;
 use Cms\Classes\ThemeManager;
+use System\Classes\Contracts\VersionManagerContract;
 use System\Models\Parameter;
 use System\Models\PluginVersion;
 use System\Helpers\Cache as CacheHelper;
@@ -64,7 +65,7 @@ class UpdateManager implements UpdateManagerContract
     protected $themeManager;
 
     /**
-     * @var VersionManager
+     * @var VersionManagerContract
      */
     protected $versionManager;
 
@@ -133,6 +134,7 @@ class UpdateManager implements UpdateManagerContract
      *
      * @param Application $app
      * @param PluginManagerContract $pluginManager
+     * @param VersionManagerContract $versionManager
      * @param Repository $config
      * @param Filesystem $filesystem
      * @param Translator $translator
@@ -142,6 +144,7 @@ class UpdateManager implements UpdateManagerContract
     public function __construct(
         Application $app,
         PluginManagerContract $pluginManager,
+        VersionManagerContract $versionManager,
         Repository $config,
         Filesystem $filesystem,
         Translator $translator,
@@ -150,7 +153,7 @@ class UpdateManager implements UpdateManagerContract
     ) {
         $this->pluginManager = $pluginManager;
         $this->themeManager = class_exists(ThemeManager::class) ? ThemeManager::instance() : null;
-        $this->versionManager = VersionManager::instance();
+        $this->versionManager = $versionManager;
         $this->app = $app;
         $this->config = $config;
         $this->filesystem = $filesystem;

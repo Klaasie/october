@@ -6,7 +6,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Log\Writer;
 use October\Rain\Filesystem\Filesystem;
 use October\Rain\Support\Str;
@@ -52,7 +52,7 @@ class PluginManager implements PluginManagerContract
     private $view;
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     private $db;
 
@@ -114,7 +114,7 @@ class PluginManager implements PluginManagerContract
      * @param Translator $translator
      * @param Repository $config
      * @param Factory $view
-     * @param Connection $db
+     * @param ConnectionInterface $db
      * @param ComposerManagerContract $composerManager
      * @param Writer $log
      * @throws FileNotFoundException
@@ -125,7 +125,7 @@ class PluginManager implements PluginManagerContract
         Translator $translator,
         Repository $config,
         Factory $view,
-        Connection $db,
+        ConnectionInterface $db,
         ComposerManagerContract $composerManager,
         Writer $log
     ) {
