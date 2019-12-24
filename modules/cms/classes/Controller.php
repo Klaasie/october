@@ -25,6 +25,7 @@ use System\Helpers\View as ViewHelper;
 use System\Twig\Extension as SystemTwigExtension;
 use October\Rain\Exception\AjaxException;
 use October\Rain\Exception\ValidationException;
+use October\Rain\Exception\ApplicationException;
 use October\Rain\Parse\Bracket as TextParser;
 use Illuminate\Http\RedirectResponse;
 
@@ -997,9 +998,7 @@ class Controller
             /*
              * Check if the theme has an override
              */
-            if (strpos($partialName, '/') === false) {
-                $partial = ComponentPartial::loadOverrideCached($this->theme, $componentObj, $partialName);
-            }
+            $partial = ComponentPartial::loadOverrideCached($this->theme, $componentObj, $partialName);
 
             /*
              * Check the component partial
