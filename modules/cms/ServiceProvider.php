@@ -2,6 +2,7 @@
 
 use App;
 use Backend\Classes\Contracts\WidgetManagerContract;
+use Cms\Classes\Contracts\ComponentManagerContract;
 use Event;
 use Backend;
 use BackendMenu;
@@ -26,6 +27,8 @@ class ServiceProvider extends ModuleServiceProvider
     public function register()
     {
         parent::register('cms');
+
+        $this->app->singleton(ComponentManagerContract::class, ComponentManager::class);
 
         $this->registerComponents();
         $this->registerThemeLogging();
@@ -62,10 +65,10 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerComponents()
     {
-        ComponentManager::instance()->registerComponents(function ($manager) {
-            $manager->registerComponent(\Cms\Components\ViewBag::class, 'viewBag');
-            $manager->registerComponent(\Cms\Components\Resources::class, 'resources');
-        });
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
+        $manager->registerComponent(\Cms\Components\ViewBag::class, 'viewBag');
+        $manager->registerComponent(\Cms\Components\Resources::class, 'resources');
     }
 
     /**

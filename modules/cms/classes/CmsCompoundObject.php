@@ -1,5 +1,6 @@
 <?php namespace Cms\Classes;
 
+use Cms\Classes\Contracts\ComponentManagerContract;
 use Ini;
 use Lang;
 use Cache;
@@ -185,7 +186,8 @@ class CmsCompoundObject extends CmsObject
     {
         $this->settings = $this->getSettingsAttribute();
 
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $components = [];
         foreach ($this->settings as $setting => $value) {
             if (!is_array($value)) {
@@ -208,6 +210,7 @@ class CmsCompoundObject extends CmsObject
      * the standard way to access components is not an option.
      * @param string $componentName Specifies the component name.
      * @return \Cms\Classes\ComponentBase Returns the component instance or null.
+     * @throws \October\Rain\Exception\SystemException
      */
     public function getComponent($componentName)
     {
@@ -215,7 +218,9 @@ class CmsCompoundObject extends CmsObject
             return null;
         }
 
-        return ComponentManager::instance()->makeComponent(
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
+        return $manager->makeComponent(
             $componentName,
             null,
             $this->settings['components'][$componentSection]
@@ -226,10 +231,12 @@ class CmsCompoundObject extends CmsObject
      * Checks if the object has a component with the specified name.
      * @param string $componentName Specifies the component name.
      * @return mixed Return false or the full component name used on the page (it could include the alias).
+     * @throws \October\Rain\Exception\SystemException
      */
     public function hasComponent($componentName)
     {
-        $componentManager = ComponentManager::instance();
+        /** @var ComponentManagerContract $componentManager */
+        $componentManager = resolve(ComponentManagerContract::class);
         $componentName = $componentManager->resolve($componentName);
 
         foreach ($this->settings['components'] as $sectionName => $values) {

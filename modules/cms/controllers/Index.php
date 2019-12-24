@@ -1,5 +1,6 @@
 <?php namespace Cms\Controllers;
 
+use Cms\Classes\Contracts\ComponentManagerContract;
 use Url;
 use Lang;
 use Flash;
@@ -19,7 +20,6 @@ use Cms\Classes\Partial;
 use Cms\Classes\Content;
 use Cms\Classes\CmsObject;
 use Cms\Classes\CmsCompoundObject;
-use Cms\Classes\ComponentManager;
 use Cms\Classes\ComponentPartial;
 use Cms\Helpers\Cms as CmsHelpers;
 use Backend\Classes\Controller;
@@ -376,6 +376,7 @@ class Index extends Controller
     /**
      * Remembers an open or closed state for a supplied token, for example, component folders.
      * @return array
+     * @throws \October\Rain\Exception\SystemException
      */
     public function onExpandMarkupToken()
     {
@@ -400,7 +401,8 @@ class Index extends Controller
             throw new ApplicationException(trans('cms::lang.component.not_found', ['name' => $alias]));
         }
 
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $componentObj = $manager->makeComponent($componentName);
         $partial = ComponentPartial::load($componentObj, 'default');
         $content = $partial->getContent();

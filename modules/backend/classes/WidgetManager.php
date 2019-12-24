@@ -1,6 +1,5 @@
 <?php namespace Backend\Classes;
 
-use Backend\Classes\Contracts\NavigationManagerContract;
 use Backend\Classes\Contracts\WidgetManagerContract;
 use Illuminate\Contracts\Events\Dispatcher;
 use October\Rain\Exception\SystemException;
@@ -73,7 +72,7 @@ class WidgetManager implements WidgetManagerContract
      * @deprecated V1.0.xxx Instead of using this method,
      *             rework your logic to resolve the class through dependency injection.
      */
-    public static function instance(): NavigationManagerContract
+    public static function instance(): WidgetManagerContract
     {
         return resolve(self::class);
     }

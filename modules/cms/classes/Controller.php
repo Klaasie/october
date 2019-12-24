@@ -1,6 +1,7 @@
 <?php namespace Cms\Classes;
 
 use Cms;
+use Cms\Classes\Contracts\ComponentManagerContract;
 use System\Classes\Contracts\CombineAssetsContract;
 use Url;
 use App;
@@ -1037,7 +1038,8 @@ class Controller
         if ($partial instanceof Partial) {
             $this->partialStack->stackPartial();
 
-            $manager = ComponentManager::instance();
+            /** @var ComponentManagerContract $manager */
+            $manager = resolve(ComponentManagerContract::class);
 
             foreach ($partial->settings['components'] as $component => $properties) {
                 // Do not inject the viewBag component to the environment.
@@ -1415,7 +1417,8 @@ class Controller
      */
     public function addComponent($name, $alias, $properties, $addToLayout = false)
     {
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
 
         if ($addToLayout) {
             if (!$componentObj = $manager->makeComponent($name, $this->layoutObj, $properties)) {

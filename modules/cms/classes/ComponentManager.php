@@ -1,9 +1,9 @@
 <?php namespace Cms\Classes;
 
-use Str;
+use Cms\Classes\Contracts\ComponentManagerContract;
+use October\Rain\Exception\SystemException;
+use October\Rain\Support\Str;
 use System\Classes\Contracts\PluginManagerContract;
-use SystemException;
-use Illuminate\Support\Facades\App;
 
 /**
  * Component manager
@@ -11,10 +11,8 @@ use Illuminate\Support\Facades\App;
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
  */
-class ComponentManager
+class ComponentManager implements ComponentManagerContract
 {
-    use \October\Rain\Support\Traits\Singleton;
-
     /**
      * @var array Cache of registration callbacks.
      */
@@ -41,8 +39,22 @@ class ComponentManager
     protected $detailsCache;
 
     /**
+     * Static instance method
+     * Kept this one to remain backwards compatible.
+     *
+     * @deprecated V1.0.xxx Instead of using this method,
+     *             rework your logic to resolve the class through dependency injection.
+     */
+    public static function instance(): ComponentManagerContract
+    {
+        return resolve(self::class);
+    }
+
+    /**
      * Scans each plugin an loads it's components.
+     *
      * @return void
+     * @throws SystemException
      */
     protected function loadComponents()
     {
@@ -73,14 +85,7 @@ class ComponentManager
     }
 
     /**
-     * Manually registers a component for consideration. Usage:
-     *
-     *     ComponentManager::registerComponents(function ($manager) {
-     *         $manager->registerComponent('October\Demo\Components\Test', 'testComponent');
-     *     });
-     *
-     * @param callable $definitions
-     * @return array Array values are class names.
+     * {@inheritDoc}
      */
     public function registerComponents(callable $definitions)
     {
@@ -88,7 +93,7 @@ class ComponentManager
     }
 
     /**
-     * Registers a single component.
+     * {@inheritDoc}
      */
     public function registerComponent($className, $code = null, $plugin = null)
     {
@@ -104,7 +109,7 @@ class ComponentManager
             $code = Str::getClassId($className);
         }
 
-        if ($code == 'viewBag' && $className != 'Cms\Components\ViewBag') {
+        if ($code === 'viewBag' && $className !== 'Cms\Components\ViewBag') {
             throw new SystemException(sprintf(
                 'The component code viewBag is reserved. Please use another code for the component class %s.',
                 $className
@@ -120,10 +125,9 @@ class ComponentManager
     }
 
     /**
-     * Returns a list of registered components.
-     * @return array Array keys are codes, values are class names.
+     * {@inheritDoc}
      */
-    public function listComponents()
+    public function listComponents(): array
     {
         if ($this->codeMap === null) {
             $this->loadComponents();
@@ -133,10 +137,9 @@ class ComponentManager
     }
 
     /**
-     * Returns an array of all component detail definitions.
-     * @return array Array keys are component codes, values are the details defined in the component.
+     * {@inheritDoc}
      */
-    public function listComponentDetails()
+    public function listComponentDetails(): array
     {
         if ($this->detailsCache !== null) {
             return $this->detailsCache;
@@ -151,9 +154,7 @@ class ComponentManager
     }
 
     /**
-     * Returns a class name from a component code
-     * Normalizes a class name or converts an code to it's class name.
-     * @return string The class name resolved, or null.
+     * {@inheritDoc}
      */
     public function resolve($name)
     {
@@ -173,10 +174,12 @@ class ComponentManager
 
     /**
      * Checks to see if a component has been registered.
+     *
      * @param string $name A component class name or code.
      * @return bool Returns true if the component is registered, otherwise false.
+     * @throws SystemException
      */
-    public function hasComponent($name)
+    public function hasComponent($name): bool
     {
         $className = $this->resolve($name);
         if (!$className) {
@@ -187,13 +190,9 @@ class ComponentManager
     }
 
     /**
-     * Makes a component object with properties set.
-     * @param string $name A component class name or code.
-     * @param CmsObject $cmsObject The Cms object that spawned this component.
-     * @param array $properties The properties set by the Page or Layout.
-     * @return ComponentBase The component object.
+     * {@inheritDoc}
      */
-    public function makeComponent($name, $cmsObject = null, $properties = [])
+    public function makeComponent($name, $cmsObject = null, $properties = []): ComponentBase
     {
         $className = $this->resolve($name);
         if (!$className) {
@@ -210,24 +209,18 @@ class ComponentManager
             ));
         }
 
-        $component = App::make($className, [$cmsObject, $properties]);
+        $component = app()->make($className, [$cmsObject, $properties]);
         $component->name = $name;
 
         return $component;
     }
 
     /**
-     * Returns a parent plugin for a specific component object.
-     * @param mixed $component A component to find the plugin for.
-     * @return mixed Returns the plugin object or null.
+     * {@inheritDoc}
      */
     public function findComponentPlugin($component)
     {
         $className = Str::normalizeClassName(get_class($component));
-        if (isset($this->pluginMap[$className])) {
-            return $this->pluginMap[$className];
-        }
-
-        return null;
+        return $this->pluginMap[$className] ?? null;
     }
 }

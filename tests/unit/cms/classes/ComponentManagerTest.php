@@ -1,5 +1,6 @@
 <?php
 
+use Cms\Classes\Contracts\ComponentManagerContract;
 use Cms\Classes\Page;
 use Cms\Classes\Theme;
 use Cms\Classes\Layout;
@@ -24,7 +25,8 @@ class ComponentManagerTest extends TestCase
 
     public function testListComponents()
     {
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $components = $manager->listComponents();
 
         $this->assertArrayHasKey('testArchive', $components);
@@ -33,7 +35,8 @@ class ComponentManagerTest extends TestCase
 
     public function testListComponentDetails()
     {
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $components = $manager->listComponentDetails();
 
         $this->assertArrayHasKey('testArchive', $components);
@@ -51,7 +54,8 @@ class ComponentManagerTest extends TestCase
 
     public function testGetComponentWithFactoryUsingAutomaticResolution()
     {
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $components = $manager->listComponentDetails();
 
         $this->assertArrayHasKey('testComments', $components);
@@ -71,7 +75,8 @@ class ComponentManagerTest extends TestCase
 
     public function testFindByAlias()
     {
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
 
         $component = $manager->resolve('testArchive');
         $this->assertEquals('\October\Tester\Components\Archive', $component);
@@ -82,7 +87,8 @@ class ComponentManagerTest extends TestCase
 
     public function testHasComponent()
     {
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $result = $manager->hasComponent('testArchive');
         $this->assertTrue($result);
 
@@ -100,7 +106,8 @@ class ComponentManagerTest extends TestCase
         $pageObj = $this->spoofPageCode();
 
         // Test a defined property
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $object = $manager->makeComponent('testArchive', $pageObj, ['posts-per-page' => 20]);
         $this->assertNotNull($object);
         $this->assertEquals(20, $object->property('posts-per-page'));
@@ -115,7 +122,8 @@ class ComponentManagerTest extends TestCase
     public function testDefineProperties()
     {
         include_once base_path() . '/tests/fixtures/plugins/october/tester/components/Archive.php';
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $object = $manager->makeComponent('testArchive');
         $details = $object->componentDetails();
         $this->assertCount(2, $details);

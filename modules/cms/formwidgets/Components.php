@@ -1,8 +1,8 @@
 <?php namespace Cms\FormWidgets;
 
 use Backend\Classes\FormWidgetBase;
-use Cms\Classes\ComponentManager;
 use Cms\Classes\ComponentHelpers;
+use Cms\Classes\Contracts\ComponentManagerContract;
 use Cms\Components\UnknownComponent;
 use Exception;
 
@@ -33,7 +33,8 @@ class Components extends FormWidgetBase
             return $result;
         }
 
-        $manager = ComponentManager::instance();
+        /** @var ComponentManagerContract $manager */
+        $manager = resolve(ComponentManagerContract::class);
         $manager->listComponents();
 
         foreach ($this->model->settings['components'] as $name => $properties) {
