@@ -129,10 +129,7 @@ class ComponentManager implements ComponentManagerContract
      */
     public function listComponents(): array
     {
-        if ($this->codeMap === null) {
-            $this->loadComponents();
-        }
-
+        $this->loadComponents();
         return $this->codeMap;
     }
 

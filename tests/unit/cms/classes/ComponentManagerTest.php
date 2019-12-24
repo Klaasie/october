@@ -6,7 +6,6 @@ use Cms\Classes\Theme;
 use Cms\Classes\Layout;
 use Cms\Classes\Controller;
 use Cms\Classes\CodeParser;
-use Cms\Classes\ComponentManager;
 
 class ComponentManagerTest extends TestCase
 {

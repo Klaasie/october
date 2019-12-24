@@ -1,6 +1,7 @@
 <?php namespace System\Classes;
 
 use ApplicationException;
+use DependencyTest\NotFound\Plugin;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Foundation\Application;
@@ -742,8 +743,16 @@ class PluginManager implements PluginManagerContract
      */
     public function getDependencies($plugin)
     {
-        if (is_string($plugin) && (!$pluginObj = $this->findByIdentifier($plugin))) {
-            return false;
+        $pluginObj = null;
+        if (is_string($plugin)) {
+            $pluginObj = $this->findByIdentifier($plugin);
+            if (!$pluginObj instanceof PluginBase) {
+                return false;
+            }
+        }
+
+        if ($plugin instanceof PluginBase) {
+            $pluginObj = $plugin;
         }
 
         if (!isset($pluginObj->require) || !$pluginObj->require) {

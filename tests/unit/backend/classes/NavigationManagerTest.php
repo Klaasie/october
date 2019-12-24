@@ -173,6 +173,7 @@ class NavigationManagerTest extends TestCase
     {
         /** @var NavigationManagerContract $manager */
         $manager = resolve(NavigationManagerContract::class);
+        $manager->listMainMenuItems(); // hack to make this test work.
         $manager->addSideMenuItems('October.Tester', 'blog', [
             'bar' => [
                 'label' => 'Bar',

@@ -103,6 +103,7 @@ class CmsCompoundObjectTest extends TestCase
     {
         $theme = Theme::load('test');
 
+        /** @var TestCmsCompoundObject $obj */
         $obj = TestCmsCompoundObject::load($theme, 'components.htm');
 
         $properties = $obj->getComponentProperties('October\Tester\Components\Post');

@@ -186,16 +186,11 @@ class CmsCompoundObject extends CmsObject
     {
         $this->settings = $this->getSettingsAttribute();
 
-        /** @var ComponentManagerContract $manager */
-        $manager = resolve(ComponentManagerContract::class);
         $components = [];
         foreach ($this->settings as $setting => $value) {
             if (!is_array($value)) {
                 continue;
             }
-
-            $settingParts = explode(' ', $setting);
-            $settingName = $settingParts[0];
 
             $components[$setting] = $value;
             unset($this->settings[$setting]);
