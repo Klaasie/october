@@ -1,0 +1,31 @@
+<div class="tw-p-2 tw-text-gray-900 tw-bg-gray-800 tw-shadow-lg tw-leading-loose ">
+            <span class="tw-px-2 tw-mr-2 tw-border-gray-800">
+              <img src="https://www.freepnglogos.com/uploads/spotify-logo-png/file-spotify-logo-png-4.png" alt="alt placeholder" class="tw-w-8 tw-h-8 tw--mt-1 tw-inline tw-mx-auto">
+            </span>
+
+    <div  class="dropdown-toggle tw-w-10 tw-relative tw-float-right tw-mr-3 tw-cursor-pointer hover:tw-text-gray-700">
+        <img
+            src="<?= $this->user->getAvatarThumb(90, ['mode' => 'crop', 'extension' => 'png']) ?>"
+            class="account-avatar tw-inline tw-p-2 tw-bg-gray-200 tw-rounded-full" loading="lazy" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+        <span class="tw-absolute tw-right-0 tw-top-0 tw--mt-1 tw--mr-1 tw-text-xs tw-bg-yellow-500 tw-text-black tw-font-medium tw-px-2 tw-rounded-full">3</span>
+        <div class="tw-mt-2 tw-py-2 tw-w-64 tw-bg-white tw-rounded-lg tw-shadow-xl tw-absolute tw-right-0 tw-hidden" aria-labelledby="userMenu">
+            <?php $mySettings = System\Classes\SettingsManager::instance()->listItems('mysettings'); ?>
+            <?php foreach ($mySettings as $category => $items): ?>
+                <?php foreach ($items as $item): ?>
+                    <a href="<?= $item->url ?>" class="tw-block tw-px-4 tw-py-2 tw-text-gray-800 hover:tw-bg-gray-400 hover:tw-text-gray-700 hover:tw-no-underline focus:tw-no-underline">
+                        <?= e(trans($item->label)) ?>
+                    </a>
+                <?php endforeach ?>
+            <?php endforeach ?>
+
+            <a href="<?= Backend::url('backend/auth/signout') ?>" class="tw-block tw-px-4 tw-py-2 tw-text-gray-800 hover:tw-bg-gray-400 hover:tw-text-gray-700 hover:tw-no-underline focus:tw-no-underline">
+                <?php if (\BackendAuth::isImpersonator()) : ?>
+                <?= e(trans('backend::lang.account.stop_impersonating')) ?>
+                <?php else: ?>
+                <?= e(trans('backend::lang.account.sign_out')) ?>
+                <?php endif; ?>
+            </a>
+        </div>
+    </div>
+
+</div>
