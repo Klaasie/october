@@ -1,0 +1,40 @@
+.bk-flash-message {
+    @apply bg-blue-100 border-blue-500 text-blue-700 border-l-4 p-4 tw-fixed tw-w-1/5 tw-right-2 tw-top-2 #{!important};
+    left: unset !important;
+
+    button.close {
+        @apply text-blue-700;
+        &:hover {
+            @apply text-blue-900;
+        }
+    }
+
+    &.warning {
+        @apply bg-orange-100 border-orange-500 text-orange-700 #{!important};
+        button.close {
+            @apply text-orange-700;
+            &:hover {
+                @apply text-orange-900;
+            }
+        }
+    }
+    &.danger {
+        @apply bg-red-100 border-red-500 text-red-700 #{!important};
+        button.close {
+            @apply text-red-700;
+            &:hover {
+                @apply text-red-900;
+            }
+        }
+    }
+    &.success {
+        @apply bg-green-100 border-green-500 text-green-700 #{!important};
+
+        button.close {
+            @apply text-green-700;
+            &:hover {
+                @apply text-green-900;
+            }
+        }
+    }
+}

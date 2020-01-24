@@ -4,13 +4,12 @@
         <?= $this->makeLayoutPartial('head') ?>
         <?= $this->fireViewEvent('backend.layout.extendHead', ['layout' => 'default.htm']) ?>
     </head>
-    <body class="tw-bg-gray-100 tw-font-sans tw-leading-normal tw-tracking-normal <?= $this->bodyClass ?>">
-        <?= $this->makeLayoutPartial('header') ?>
-        <div class="tw-flex md:tw-flex-row-reverse tw-flex-wrap">
-            <div class="tw-w-full md:tw-w-11/12 tw-bg-gray-100 tw-p-4 tw-text-left tw-text-gray-200">
+    <body class="<?= $this->bodyClass ?>">
+        <div class="kb-container">
+            <div class="kb-main-container">
                 <?php $flyoutContent = Block::placeholder('sidepanel-flyout') ?>
 
-                <div class="layout-row">
+                <div class="kb-page">
                     <div class="layout flyout-container"
                         <?php if ($flyoutContent): ?>
                         data-control="flyout"
@@ -54,21 +53,14 @@
                         </div>
                 </div></div>
             </div>
-            <div class="tw-w-full md:tw-w-1/12 tw-py-4 tw-px-2 tw-text-gray tw-bg-gray-800 tw-text-center tw-capitalize tw-font-medium tw-h-screen ">
-                <!-- Main Menu -->
+            <div class="kb-header-container">
+                <?= $this->makeLayoutPartial('header') ?>
                 <?= $this->makeLayoutPartial('mainmenu') ?>
             </div>
         </div>
 
-            <?php /*
 
-
-
-                </div>
-                    </div>
-                </div>
-        <!-- Flash Messages -->
-        <div id="layout-flash-messages"><?= $this->makeLayoutPartial('flash_messages') ?></div>
-        */ ?>
+            <!-- Flash Messages -->
+            <div id="layout-flash-messages"><?= $this->makeLayoutPartial('flash_messages') ?></div>
     </body>
 </html>

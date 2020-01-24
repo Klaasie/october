@@ -1,0 +1,38 @@
+body {
+    @apply tw-bg-gray-100 tw-font-sans tw-leading-normal tw-tracking-normal tw-h-screen;
+}
+
+.kb-container {
+    @apply tw-flex tw-flex-wrap;
+
+    @screen md {
+        @apply tw-flex-row-reverse;
+    }
+}
+
+.kb-main-container {
+    @apply tw-w-full tw-bg-gray-100 tw-text-left tw-text-gray-200 tw-h-screen;
+
+    @screen md {
+        @apply tw-w-10/12;
+    }
+}
+
+.kb-header-container {
+    @apply tw-w-full tw-bg-gray-800 tw-text-center tw-capitalize tw-font-medium tw-h-screen tw-border-r-4 tw-border-gray-600;
+
+    @screen md {
+        @apply tw-w-2/12;
+    }
+}
+
+.kb-page {
+    @apply tw-h-full;
+}
+
+.report-container {
+    .report-widget {
+        @apply tw-shadow;
+    }
+}
+

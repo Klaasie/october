@@ -1,3 +1,5 @@
 <?php foreach (Flash::all() as $type => $message): ?>
-    <p data-control="flash-message" class="flash-message fade <?= $type ?>" data-interval="5"><?= e($message) ?></p>
+    <div class="bk-flash-message <?= $type ?>" data-control="flash-message" data-interval="5" role="alert">
+        <p><?= e($message) ?></p>
+    </div>
 <?php endforeach ?>

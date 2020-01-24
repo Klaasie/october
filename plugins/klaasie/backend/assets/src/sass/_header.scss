@@ -1,0 +1,13 @@
+header {
+    @apply tw-border-b tw-border-gray-700 tw-flex tw-items-center tw-justify-center;
+    @screen md {
+        @apply tw-h-48;
+    }
+
+    img {
+        @apply tw-inline tw-h-32;
+        @screen md {
+            @apply tw-h-32;
+        }
+    }
+}

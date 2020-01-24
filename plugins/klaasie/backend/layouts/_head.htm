@@ -26,7 +26,6 @@
         '/modules/backend/assets/js/vendor/jquery.min.js',
         '/modules/backend/assets/js/vendor/jquery-migrate.min.js',
         '/modules/system/assets/js/framework.js',
-        '/plugins/klaasie/backend/assets/dist/js/app.js'
     ];
     if (Config::get('develop.decompileBackendAssets', false)) {
         $scripts = array_merge($scripts, Backend::decompileAsset('modules/system/assets/ui/storm.js'));
@@ -39,6 +38,7 @@
         Url::asset('modules/system/assets/js/lang/lang.'.App::getLocale().'.js'),
         Url::asset('/modules/backend/assets/js/october.flyout.js'),
         Url::asset('/modules/backend/assets/js/october.tabformexpandcontrols.js'),
+        '/plugins/klaasie/backend/assets/dist/js/app.js'
     ]);
 ?>
 
