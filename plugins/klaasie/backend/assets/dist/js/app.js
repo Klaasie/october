@@ -91,9 +91,71 @@
   !*** ./src/js/app.js ***!
   \***********************/
 /*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// modules
+__webpack_require__(/*! ./dropdown.js */ "./src/js/dropdown.js");
+
+/***/ }),
+
+/***/ "./src/js/dropdown.js":
+/*!****************************!*\
+  !*** ./src/js/dropdown.js ***!
+  \****************************/
+/*! no static exports found */
 /***/ (function(module, exports) {
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
++function ($) {
+  "use strict";
+
+  var Base = $.oc.foundation.base,
+      BaseProto = Base.prototype;
+
+  var TWDropdown = function TWDropdown(element, options) {
+    var $el = this.$el = $(element);
+    this.options = options || {};
+    Base.call(this);
+    $($el).on('click', this.proxy(this.toggle));
+  };
+
+  TWDropdown.prototype = Object.create(BaseProto);
+  TWDropdown.prototype.constructor = TWDropdown;
+
+  TWDropdown.prototype.toggle = function () {
+    $(this.$el).toggleClass('dropdown-open');
+    $(this.options.dropdownTarget).toggle();
+  };
+
+  TWDropdown.DEFAULTS = {}; // SIMPLE LIST PLUGIN DEFINITION
+  // ============================
+
+  var old = $.fn.twdropdown;
+
+  $.fn.twdropdown = function (option) {
+    return this.each(function () {
+      var $this = $(this);
+      var data = $this.data('dropdown');
+      var options = $.extend({}, TWDropdown.DEFAULTS, $this.data(), _typeof(option) == 'object' && option);
+      if (!data) $this.data('dropdown', data = new TWDropdown(this, options));
+    });
+  };
+
+  $.fn.twdropdown.Constructor = TWDropdown; // SIMPLE LIST NO CONFLICT
+  // =================
+
+  $.fn.twdropdown.noConflict = function () {
+    $.fn.twdropdown = old;
+    return this;
+  }; // SIMPLE LIST DATA-API
+  // ===============
+
+
+  $(document).render(function () {
+    $('[data-control="dropdown"]').twdropdown();
+  });
+}(window.jQuery);
 
 /***/ }),
 

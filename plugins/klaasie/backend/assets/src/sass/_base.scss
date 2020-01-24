@@ -27,8 +27,78 @@ body {
 }
 
 .kb-page {
-    @apply tw-h-full;
+    @apply tw-h-screen tw-w-full;
+
+    .kb-page-container {
+        @apply tw-flex tw-h-full;
+
+        .layout-sidenav-container {
+            @apply tw-w-1/12 tw-h-full;
+
+            .layout-relative {
+                @apply tw-h-full;
+
+                #layout-sidenav {
+                    position: unset;
+                }
+            }
+        }
+        .main-container {
+            @apply tw-w-11/12 tw-h-screen;
+
+            .main-container-relative {
+                @apply tw-h-full;
+
+                .main-container-layout {
+                    @apply tw-h-full;
+
+                    .control-breadcrumb {
+                        @apply tw-m-0;
+                    }
+
+                    .main-container-content {
+                        @apply tw-p-8 tw-pb-0 tw-overflow-y-visible tw-overflow-x-hidden;
+                        height: calc(100% - 45px);
+                    }
+                }
+            }
+        }
+    }
 }
+
+body.slim-container{
+    .kb-page {
+        .kb-page-container {
+            .main-container {
+                .main-container-relative {
+                    .main-container-layout {
+                        .main-container-content {
+                            @apply tw-p-0 tw-pt-8 tw-h-full;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+body.compact-container{
+    .kb-page {
+        .kb-page-container {
+            .main-container {
+                .main-container-relative {
+                    .main-container-layout {
+                        .main-container-content {
+                            @apply tw-p-0 tw-h-full;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Extensions
 
 .report-container {
     .report-widget {

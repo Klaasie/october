@@ -10,11 +10,11 @@
                 <?php $flyoutContent = Block::placeholder('sidepanel-flyout') ?>
 
                 <div class="kb-page">
-                    <div class="layout flyout-container"
+                    <div class="kb-page-container flyout-container"
                         <?php if ($flyoutContent): ?>
-                        data-control="flyout"
-                        data-flyout-width="400"
-                        data-flyout-toggle="#layout-sidenav"
+                            data-control="flyout"
+                            data-flyout-width="400"
+                            data-flyout-toggle="#layout-sidenav"
                         <?php endif ?>
                         >
                         <?php if ($flyoutContent): ?>
@@ -26,16 +26,16 @@
 
                         <!-- Side panel -->
                         <?php if ($sidePanelContent = Block::placeholder('sidepanel')): ?>
-                        <div class="layout-cell w-350 hide-on-small" id="layout-side-panel" data-control="layout-sidepanel">
+                        <div class="sidenav-container hide-on-small" id="layout-side-panel" data-control="layout-sidepanel">
                             <?= $sidePanelContent ?>
                         </div>
                         <?php endif ?>
 
                         <!-- Content Body -->
-                        <div class="layout-cell layout-container" id="layout-body">
-                            <div class="layout-relative">
+                        <div class="main-container layout-container" id="layout-body">
+                            <div class="main-container-relative">
 
-                                <div class="layout">
+                                <div class="main-container-layout">
                                     <?php if ($breadcrumbContent = Block::placeholder('breadcrumb')): ?>
                                     <!-- Breadcrumb -->
                                     <div class="control-breadcrumb">
@@ -44,7 +44,7 @@
                                     <?php endif ?>
 
                                     <!-- Content -->
-                                    <div class="layout-row">
+                                    <div class="main-container-content">
                                         <?= Block::placeholder('body') ?>
                                     </div>
                                 </div>
