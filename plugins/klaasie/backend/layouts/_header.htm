@@ -1,3 +1,43 @@
 <header>
-    <img src="<?= e(Backend\Models\BrandSetting::getLogo()) ?>">
+    <div class="tw-container header-container">
+        <div class="header-content">
+            <div class="header-logo">
+                <img src="<?= e(Backend\Models\BrandSetting::getLogo()) ?>">
+            </div>
+
+            <div class="header-search">
+
+            </div>
+
+            <div class="header-account" data-control="dropdown" data-dropdown-target="#account-menu">
+                <span class="menu-icon">
+                    <img src="<?= $this->user->getAvatarThumb(90, ['mode' => 'crop', 'extension' => 'png']) ?>"
+                         class="account-avatar" loading="lazy" />
+                </span>
+
+                <span class="menu-label"><?= $this->user->full_name ?></span>
+
+                <div id="account-menu" class="kb-dropdown">
+                    <?php $mySettings = System\Classes\SettingsManager::instance()->listItems('mysettings'); ?>
+                    <?php foreach ($mySettings as $category => $items): ?>
+                        <?php foreach ($items as $item): ?>
+                            <a href="<?= $item->url ?>" class="account-menu-item dropdown-item">
+                                <?= e(trans($item->label)) ?>
+                            </a>
+                       <?php endforeach ?>
+                    <?php endforeach ?>
+
+                    <a href="<?= Backend::url('backend/auth/signout') ?>" class="account-menu-item dropdown-item">
+                        <?php if (\BackendAuth::isImpersonator()) : ?>
+                            <?= e(trans('backend::lang.account.stop_impersonating')) ?>
+                        <?php else: ?>
+                            <?= e(trans('backend::lang.account.sign_out')) ?>
+                        <?php endif; ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </header>

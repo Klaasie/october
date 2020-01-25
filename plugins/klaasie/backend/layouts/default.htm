@@ -6,6 +6,9 @@
     </head>
     <body class="<?= $this->bodyClass ?>">
         <div class="kb-container">
+            <?= $this->makeLayoutPartial('header') ?>
+            <?= $this->makeLayoutPartial('mainmenu') ?>
+
             <div class="kb-main-container">
                 <?php $flyoutContent = Block::placeholder('sidepanel-flyout') ?>
 
@@ -52,15 +55,10 @@
                             </div>
                         </div>
                 </div></div>
-            </div>
-            <div class="kb-header-container">
-                <?= $this->makeLayoutPartial('header') ?>
-                <?= $this->makeLayoutPartial('mainmenu') ?>
-            </div>
         </div>
 
 
-            <!-- Flash Messages -->
-            <div id="layout-flash-messages"><?= $this->makeLayoutPartial('flash_messages') ?></div>
+        <!-- Flash Messages -->
+        <div id="layout-flash-messages"><?= $this->makeLayoutPartial('flash_messages') ?></div>
     </body>
 </html>

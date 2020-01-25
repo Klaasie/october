@@ -5,7 +5,7 @@
 ?>
 
 <div class="kb-menu">
-    <div class="kb-menu-wrapper">
+    <div class="tw-container kb-menu-wrapper">
         <div class="kb-menu-list">
             <?php foreach (BackendMenu::listMainMenuItems() as $item): ?>
                 <?php $isActive = BackendMenu::isMainMenuItemActive($item); ?>
@@ -23,36 +23,10 @@
                         data-menu-id="<?= e($item->code) ?>"
                     <?php if ($item->counterLabel): ?>title="<?= e(trans($item->counterLabel)) ?>"<?php endif ?>
                     >
-                        5
+                        <?= e($item->counter) ?>
                     </span>
                 </a>
             <?php endforeach; ?>
-            <div  class="kb-menu-list-item" data-control="dropdown" data-dropdown-target="#account-menu">
-                <span class="menu-icon">
-                    <img
-                        src="<?= $this->user->getAvatarThumb(90, ['mode' => 'crop', 'extension' => 'png']) ?>"
-                        class="account-avatar" loading="lazy" />
-                </span>
-                <span class="menu-label"><?= $this->user->full_name ?></span>
-                <div id="account-menu" class="dropdown">
-                    <?php $mySettings = System\Classes\SettingsManager::instance()->listItems('mysettings'); ?>
-                        <?php foreach ($mySettings as $category => $items): ?>
-                            <?php foreach ($items as $item): ?>
-                                <a href="<?= $item->url ?>" class="kb-menu-list-sub-item">
-                                    <?= e(trans($item->label)) ?>
-                                </a>
-                            <?php endforeach ?>
-                        <?php endforeach ?>
-
-                    <a href="<?= Backend::url('backend/auth/signout') ?>" class="kb-menu-list-sub-item">
-                        <?php if (\BackendAuth::isImpersonator()) : ?>
-                            <?= e(trans('backend::lang.account.stop_impersonating')) ?>
-                        <?php else: ?>
-                            <?= e(trans('backend::lang.account.sign_out')) ?>
-                        <?php endif; ?>
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 </div>

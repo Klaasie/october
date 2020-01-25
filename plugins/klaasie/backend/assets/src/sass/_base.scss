@@ -1,79 +1,77 @@
 body {
-    @apply tw-bg-gray-100 tw-font-sans tw-leading-normal tw-tracking-normal tw-h-screen;
-}
+    @apply tw-bg-gray-100 tw-font-sans tw-leading-normal tw-tracking-normal tw-h-screen tw-flex tw-flex-col;
 
-.kb-container {
-    @apply tw-flex tw-flex-wrap;
 
-    @screen md {
-        @apply tw-flex-row-reverse;
-    }
-}
+    .kb-page {
+        @apply tw-w-full;
+        height: calc(100vh - 104px);
 
-.kb-main-container {
-    @apply tw-w-full tw-bg-gray-100 tw-text-left tw-text-gray-200 tw-h-screen;
+        .kb-page-container {
+            @apply tw-flex tw-h-full;
 
-    @screen md {
-        @apply tw-w-10/12;
-    }
-}
+            .layout-sidenav-container {
+                @apply tw-w-1/12 tw-h-full;
 
-.kb-header-container {
-    @apply tw-w-full tw-bg-gray-800 tw-text-center tw-capitalize tw-font-medium tw-h-screen tw-border-r-4 tw-border-gray-600;
-
-    @screen md {
-        @apply tw-w-2/12;
-    }
-}
-
-.kb-page {
-    @apply tw-h-screen tw-w-full;
-
-    .kb-page-container {
-        @apply tw-flex tw-h-full;
-
-        .layout-sidenav-container {
-            @apply tw-w-1/12 tw-h-full;
-
-            .layout-relative {
-                @apply tw-h-full;
-
-                #layout-sidenav {
-                    position: unset;
-                }
-            }
-        }
-        .main-container {
-            @apply tw-w-11/12 tw-h-screen;
-
-            .main-container-relative {
-                @apply tw-h-full;
-
-                .main-container-layout {
+                .layout-relative {
                     @apply tw-h-full;
 
-                    .control-breadcrumb {
-                        @apply tw-m-0;
+                    #layout-sidenav {
+                        position: unset;
                     }
+                }
+            }
+            .sidenav-container {
+                @apply tw-w-3/12 tw-h-full;
+            }
+            .main-container {
+                @apply tw-w-full tw-h-full;
 
-                    .main-container-content {
-                        @apply tw-p-8 tw-pb-0 tw-overflow-y-visible tw-overflow-x-hidden;
-                        height: calc(100% - 45px);
+                .main-container-relative {
+                    @apply tw-h-full;
+
+                    .main-container-layout {
+                        @apply tw-h-full;
+
+                        .control-breadcrumb {
+                            @apply tw-m-0;
+                        }
+
+                        .main-container-content {
+                            @apply tw-p-8 tw-pb-0 tw-overflow-y-visible tw-overflow-x-hidden;
+                            height: calc(100% - 45px);
+                        }
                     }
                 }
             }
         }
     }
-}
 
-body.slim-container{
-    .kb-page {
-        .kb-page-container {
-            .main-container {
-                .main-container-relative {
-                    .main-container-layout {
-                        .main-container-content {
-                            @apply tw-p-0 tw-pt-8 tw-h-full;
+    // Exceptions
+
+    &.slim-container{
+        .kb-page {
+            .kb-page-container {
+                .main-container {
+                    .main-container-relative {
+                        .main-container-layout {
+                            .main-container-content {
+                                @apply tw-p-0 tw-pt-8 tw-h-full;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &.compact-container{
+        .kb-page {
+            .kb-page-container {
+                .main-container {
+                    .main-container-relative {
+                        .main-container-layout {
+                            .main-container-content {
+                                @apply tw-p-0 tw-h-full;
+                            }
                         }
                     }
                 }
@@ -82,19 +80,34 @@ body.slim-container{
     }
 }
 
-body.compact-container{
-    .kb-page {
-        .kb-page-container {
-            .main-container {
-                .main-container-relative {
-                    .main-container-layout {
-                        .main-container-content {
-                            @apply tw-p-0 tw-h-full;
-                        }
-                    }
-                }
-            }
+// Modules
+
+.kb-dropdown {
+    @apply tw-absolute tw-w-full tw-mt-2 tw-py-2 tw-rounded-lg tw-hidden tw-bg-white tw-shadow-xl tw-z-50;
+
+    .dropdown-item {
+        @apply tw-block tw-px-4 tw-py-2 tw-text-gray-800 tw-no-underline;
+
+        &:hover {
+            @apply tw-bg-main-900 tw-text-white tw-no-underline;
         }
+        &:focus {
+            @apply tw-bg-main-900 tw-text-white tw-no-underline;
+        }
+
+        &:first-child {
+            @apply tw-mt-2;
+        }
+        &:last-child {
+            @apply tw-mb-2;
+        }
+    }
+}
+
+.dropdown-open {
+
+    &:focus {
+        @apply tw-no-underline;
     }
 }
 
