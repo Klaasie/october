@@ -3,11 +3,10 @@ body {
 
 
     .kb-page {
-        @apply tw-w-full;
-        height: calc(100vh - 104px);
+        @apply tw-w-full tw-h-full;
 
         .kb-page-container {
-            @apply tw-flex tw-h-full;
+            @apply tw-flex-col tw-h-full;
 
             .layout-sidenav-container {
                 @apply tw-w-1/12 tw-h-full;
@@ -80,6 +79,13 @@ body {
     }
 }
 
+// Defaults
+a {
+    &:focus {
+        @apply tw-outline-none tw-shadow-none;
+    }
+}
+
 // Modules
 
 .kb-dropdown {
@@ -109,6 +115,10 @@ body {
     &:focus {
         @apply tw-no-underline;
     }
+}
+
+.kb-overlay {
+    @apply tw-absolute tw-top-0 tw-left-0 tw-h-full tw-w-full tw-bg-black tw-opacity-25 tw-hidden;
 }
 
 // Extensions

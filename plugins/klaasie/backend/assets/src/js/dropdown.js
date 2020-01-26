@@ -9,7 +9,8 @@
         this.options = options || {};
 
         Base.call(this);
-        $($el).on('click', this.proxy(this.toggle))
+        $($el).on('click', this.proxy(this.toggle));
+        $('#overlay').on('click', this.proxy(this.toggle));
     };
 
     TWDropdown.prototype = Object.create(BaseProto);
@@ -17,6 +18,7 @@
 
     TWDropdown.prototype.toggle = function () {
         $(this.$el).toggleClass('dropdown-open');
+        $('#overlay').toggle();
         $(this.options.dropdownTarget).toggle();
     };
 

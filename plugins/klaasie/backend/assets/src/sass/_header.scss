@@ -28,13 +28,34 @@ header {
 
 
                 .menu-label {
-                    @apply tw-text-white;
+                    @apply tw-text-white tw-break-words;
+
+                    @screen sm {
+                        @apply tw-hidden;
+                    }
+                    @screen md {
+                        @apply tw-inline-block;
+                    }
                 }
                 .menu-icon {
                     @apply tw-p-2 tw-rounded-full tw-w-full tw-w-2/12 tw-text-center tw-text-3xl;
 
+                    @screen sm {
+                        @apply tw-text-xl;
+                    }
+                    @screen lg {
+                        @apply tw-text-3xl;
+                    }
+
                     img {
                         @apply tw-inline tw-h-12;
+
+                        @screen sm {
+                            @apply tw-h-6;
+                        }
+                        @screen lg {
+                            @apply tw-h-12;
+                        }
 
                         &.account-avatar {
                             @apply tw-rounded-full;

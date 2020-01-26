@@ -6,7 +6,7 @@
 
 <div class="kb-menu">
     <div class="tw-container kb-menu-wrapper">
-        <div class="kb-menu-list">
+        <div id="main-menu" class="kb-menu-list">
             <?php foreach (BackendMenu::listMainMenuItems() as $item): ?>
                 <?php $isActive = BackendMenu::isMainMenuItemActive($item); ?>
                 <a href="<?= $item->url ?>" class="kb-menu-list-item <?= $isActive ? 'active' : null ?>">

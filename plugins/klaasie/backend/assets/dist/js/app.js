@@ -94,7 +94,12 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 // modules
-__webpack_require__(/*! ./dropdown.js */ "./src/js/dropdown.js");
+__webpack_require__(/*! ./dropdown.js */ "./src/js/dropdown.js"); // Initialize components
+
+
+$(document).ready(function () {
+  $('#main-menu').dragScroll();
+});
 
 /***/ }),
 
@@ -118,6 +123,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     this.options = options || {};
     Base.call(this);
     $($el).on('click', this.proxy(this.toggle));
+    $('#overlay').on('click', this.proxy(this.toggle));
   };
 
   TWDropdown.prototype = Object.create(BaseProto);
@@ -125,6 +131,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
   TWDropdown.prototype.toggle = function () {
     $(this.$el).toggleClass('dropdown-open');
+    $('#overlay').toggle();
     $(this.options.dropdownTarget).toggle();
   };
 
