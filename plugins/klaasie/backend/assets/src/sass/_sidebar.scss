@@ -1,0 +1,68 @@
+.kb-page-content {
+    .l.sidenav-container {
+        @apply tw-w-1/12 tw-h-full;
+
+        .layout-relative {
+            @apply tw-h-full;
+
+            #layout-sidenav {
+                position: unset;
+            }
+        }
+    }
+}
+
+
+// testing
+
+.layout {
+    @apply tw-block;
+    table-layout: unset;
+
+    .layout-cell {
+        display: unset;
+    }
+
+    .layout-row {
+        display: unset;
+
+        .layout-cell {
+            display: unset;
+
+            .layout-absolute {
+                position: unset;
+            }
+        }
+    }
+}
+
+// Support old table css layout for forms for now
+.main-container-layout {
+    .layout {
+        @apply tw-table tw-table-fixed;
+
+        .layout-cell {
+            @apply tw-table-cell;
+        }
+
+        >.layout-row {
+            @apply tw-table-row;
+
+            .layout-cell {
+                @apply tw-table-cell
+
+                .layout-absolute {
+                    @apply tw-absolute;
+                }
+            }
+        }
+    }
+
+    .tab-pane {
+        @apply tw-hidden;
+
+        &.active {
+            @apply tw-table-cell;
+        }
+    }
+}

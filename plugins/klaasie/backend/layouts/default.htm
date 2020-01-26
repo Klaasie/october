@@ -27,34 +27,12 @@
                         <!-- Side Navigation -->
                         <?= $this->makeLayoutPartial('sidenav') ?>
 
-                        <!-- Side panel -->
-                        <?php if ($sidePanelContent = Block::placeholder('sidepanel')): ?>
-                        <div class="sidenav-container hide-on-small" id="layout-side-panel" data-control="layout-sidepanel">
-                            <?= $sidePanelContent ?>
+                        <!-- Page content -->
+                        <div class="kb-page-content">
+                            <?= $this->makeLayoutPartial('page') ?>
                         </div>
-                        <?php endif ?>
-
-                        <!-- Content Body -->
-                        <div class="main-container layout-container" id="layout-body">
-                            <div class="main-container-relative">
-
-                                <div class="main-container-layout">
-                                    <?php if ($breadcrumbContent = Block::placeholder('breadcrumb')): ?>
-                                    <!-- Breadcrumb -->
-                                    <div class="control-breadcrumb">
-                                        <?= $breadcrumbContent ?>
-                                    </div>
-                                    <?php endif ?>
-
-                                    <!-- Content -->
-                                    <div class="main-container-content">
-                                        <?= Block::placeholder('body') ?>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                </div></div>
+                </div>
+            </div>
         </div>
 
 

@@ -18,7 +18,6 @@
     $styles = [
         Url::asset('modules/system/assets/ui/storm.css'),
         '/modules/backend/assets/css/october.css',
-        '/plugins/klaasie/backend/assets/dist/css/app.css'
     ];
 
     // Scripts
@@ -46,6 +45,8 @@
     <link href="<?= $style . '?v=' . $coreBuild; ?>" rel="stylesheet" importance="high">
     <link href="<?= $style . '?v=' . $coreBuild; ?>" rel="preload" as="style" importance="high">
 <?php endforeach; ?>
+
+<link href="<?= '/plugins/klaasie/backend/assets/dist/css/app.css?v=' . $coreBuild; ?>" rel="stylesheet" importance="high">
 
 <?php foreach ($scripts as $script) : ?>
     <script data-cfasync="false" src="<?= $script . '?v=' . $coreBuild; ?>" importance="high"></script>
