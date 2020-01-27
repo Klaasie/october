@@ -6,8 +6,7 @@
 
         // Unset a bunch of styles
         ul.kb-sidenav {
-            position: unset;
-            @apply tw-justify-center;
+            @apply tw-flex tw-flex-no-wrap tw-justify-center;
 
             li {
                 display: unset;

@@ -12,7 +12,7 @@
                  class="kb-menu-wrapper kb-sidenav-wrapper"
                  data-active-class="active"
                  data-control="sidenav">
-                <ul
+                <ul id="sub-menu"
                     class="kb-menu-list kb-sidenav">
                     <?php foreach ($sideMenuItems as $sideItemCode => $item): ?>
                         <?php $isActive = BackendMenu::isSideMenuItemActive($item) ? 'active' : null; ?>

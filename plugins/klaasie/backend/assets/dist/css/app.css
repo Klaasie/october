@@ -12470,6 +12470,8 @@ header .header-container .header-content .header-account .menu-icon img.account-
 
 .kb-menu .kb-menu-wrapper .kb-menu-list .kb-menu-list-item {
   text-decoration: none;
+  -webkit-box-flex: 0;
+          flex: none;
   margin-right: 1rem;
   color: #718096;
   opacity: 0.75;
@@ -12535,7 +12537,9 @@ header .header-container .header-content .header-account .menu-icon img.account-
 }
 
 .kb-sidenav-container #layout-sidenav.kb-sidenav-wrapper ul.kb-sidenav {
-  position: unset;
+  display: -webkit-box;
+  display: flex;
+  flex-wrap: nowrap;
   -webkit-box-pack: center;
           justify-content: center;
 }

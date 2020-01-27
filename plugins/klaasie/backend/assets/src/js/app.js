@@ -1,6 +1,7 @@
 // modules
 
 require('./dropdown.js');
+require('./sidenav.js');
 
 // Initialize components
 

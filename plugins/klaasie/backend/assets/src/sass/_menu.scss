@@ -16,7 +16,7 @@
             @apply tw-flex tw-flex-no-wrap tw-overflow-hidden;
 
             .kb-menu-list-item {
-                @apply tw-no-underline tw-mr-4 tw-text-gray-600 tw-opacity-75 tw-flex tw-items-center tw-py-4 tw-border-b tw-border-transparent tw-px-4;
+                @apply tw-no-underline tw-flex-none tw-mr-4 tw-text-gray-600 tw-opacity-75 tw-flex tw-items-center tw-py-4 tw-border-b tw-border-transparent tw-px-4;
 
                 &:hover {
                     @apply tw-opacity-100 tw-border-gray-600;
