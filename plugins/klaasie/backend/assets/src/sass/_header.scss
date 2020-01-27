@@ -5,14 +5,18 @@ header {
         @apply tw-mx-auto tw-p-4;
 
         .header-content {
-            @apply tw-flex tw-items-center;
-
-            @screen md {
-                @apply tw-justify-between;
-            }
+            @apply tw-flex tw-items-center tw-justify-between;
 
             .header-logo {
-                @apply tw-w-1/12 ;
+                @apply tw-w-6/12;
+
+                @screen sm {
+                    @apply tw-w-3/12;
+                }
+
+                @screen lg {
+                    @apply tw-w-1/12;
+                }
 
                 img {
                     @apply tw-h-16;
@@ -20,20 +24,31 @@ header {
             }
 
             .header-search {
-                @apply tw-w-9/12;
+                @apply tw-w-9/12 tw-hidden;
+
+                @screen lg {
+                    @apply tw-block;
+                }
             }
 
             .header-account {
-                @apply tw-cursor-pointer tw-w-2/12 tw-p-2 tw-rounded tw-text-center tw-relative;
+                @apply tw-cursor-pointer tw-w-6/12 tw-p-2 tw-rounded tw-text-right tw-relative;
 
+                @screen sm {
+                    @apply tw-w-3/12;
+                }
+
+                @screen lg {
+                    @apply tw-w-2/12;
+                }
 
                 .menu-label {
-                    @apply tw-text-white tw-break-words;
+                    @apply tw-text-white tw-break-words tw-hidden;
 
                     @screen sm {
                         @apply tw-hidden;
                     }
-                    @screen md {
+                    @screen lg {
                         @apply tw-inline-block;
                     }
                 }
@@ -51,7 +66,7 @@ header {
                         @apply tw-inline tw-h-12;
 
                         @screen sm {
-                            @apply tw-h-6;
+                            @apply tw-h-12;
                         }
                         @screen lg {
                             @apply tw-h-12;

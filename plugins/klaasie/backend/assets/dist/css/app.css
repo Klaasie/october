@@ -12344,17 +12344,24 @@ header .header-container .header-content {
   display: flex;
   -webkit-box-align: center;
           align-items: center;
-}
-
-@media (min-width: 768px) {
-  header .header-container .header-content {
-    -webkit-box-pack: justify;
-            justify-content: space-between;
-  }
+  -webkit-box-pack: justify;
+          justify-content: space-between;
 }
 
 header .header-container .header-content .header-logo {
-  width: 8.333333%;
+  width: 50%;
+}
+
+@media (min-width: 640px) {
+  header .header-container .header-content .header-logo {
+    width: 25%;
+  }
+}
+
+@media (min-width: 1024px) {
+  header .header-container .header-content .header-logo {
+    width: 8.333333%;
+  }
 }
 
 header .header-container .header-content .header-logo img {
@@ -12363,20 +12370,40 @@ header .header-container .header-content .header-logo img {
 
 header .header-container .header-content .header-search {
   width: 75%;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  header .header-container .header-content .header-search {
+    display: block;
+  }
 }
 
 header .header-container .header-content .header-account {
   cursor: pointer;
-  width: 16.666667%;
+  width: 50%;
   padding: 0.5rem;
   border-radius: 0.25rem;
-  text-align: center;
+  text-align: right;
   position: relative;
+}
+
+@media (min-width: 640px) {
+  header .header-container .header-content .header-account {
+    width: 25%;
+  }
+}
+
+@media (min-width: 1024px) {
+  header .header-container .header-content .header-account {
+    width: 16.666667%;
+  }
 }
 
 header .header-container .header-content .header-account .menu-label {
   color: #fff;
   overflow-wrap: break-word;
+  display: none;
 }
 
 @media (min-width: 640px) {
@@ -12385,7 +12412,7 @@ header .header-container .header-content .header-account .menu-label {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   header .header-container .header-content .header-account .menu-label {
     display: inline-block;
   }
@@ -12419,7 +12446,7 @@ header .header-container .header-content .header-account .menu-icon img {
 
 @media (min-width: 640px) {
   header .header-container .header-content .header-account .menu-icon img {
-    height: 1.5rem;
+    height: 3rem;
   }
 }
 
@@ -12683,6 +12710,85 @@ header .header-container .header-content .header-account .menu-icon img.account-
 
 .main-container-layout .tab-pane.active {
   display: table-cell;
+}
+
+body.sidenav-tree-root .kb-main-container .kb-page .kb-page-container .kb-page-content {
+  display: none;
+}
+
+body.sidenav-tree-root .sidenav-tree {
+  width: 100%;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-pack: center;
+          justify-content: center;
+  background-color: transparent;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout {
+  width: 83.333333%;
+  padding: 1.25rem;
+  margin: 2.5rem;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout .control-toolbar {
+  margin-bottom: 2.5rem;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout .control-toolbar > .layout-cell {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-pack: center;
+          justify-content: center;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout .control-toolbar > .layout-cell .toolbar-item {
+  width: 50%;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout .control-toolbar > .layout-cell .toolbar-item input {
+  border-width: 1px;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-style: solid;
+  border-radius: 0.5rem;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout .control-scrollbar {
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-width: 1px;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level {
+  background-color: #fff;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li .group h3 {
+  background-color: #53A9DD;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li .group:before, body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li .group:after {
+  display: none;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li ul li a {
+  color: #718096;
+  opacity: 1;
+  border-bottom-width: 0;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li ul li a span.header, body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li ul li a span.description {
+  color: #718096;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li ul li a:hover {
+  color: #53A9DD;
+}
+
+body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li ul li a:hover span.header, body.sidenav-tree-root .sidenav-tree > .layout ul.top-level li ul li a:hover span.description {
+  color: #53A9DD;
 }
 
 @media (min-width: 640px) {

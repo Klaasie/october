@@ -1,0 +1,72 @@
+// Sidenav tree root
+
+body.sidenav-tree-root {
+    .kb-main-container .kb-page .kb-page-container .kb-page-content {
+        @apply tw-hidden;
+    }
+    .sidenav-tree {
+        @apply tw-w-full tw-flex tw-justify-center tw-bg-transparent;
+
+        >.layout {
+            @apply tw-w-10/12 tw-p-5 tw-m-10;
+
+            .control-toolbar {
+                @apply tw-mb-10;
+
+                >.layout-cell {
+                    @apply tw-flex tw-justify-center;
+
+                    .toolbar-item {
+                        @apply tw-w-6/12;
+
+                        input {
+                            @apply tw-border tw-border-gray-300 tw-shadow tw-border-solid tw-rounded-lg;
+                        }
+                    }
+                }
+            }
+
+            .control-scrollbar {
+                @apply tw-rounded tw-shadow tw-border;
+            }
+
+            ul.top-level {
+                @apply tw-bg-white tw-shadow-2xl;
+
+                li {
+
+                    .group {
+
+                        h3 {
+                            @apply tw-bg-main-600;
+                        }
+
+                        &:before, &:after {
+                            @apply tw-hidden;
+                        }
+                    }
+
+                    ul {
+                        li {
+                            a {
+                                @apply tw-text-gray-600 tw-opacity-100 tw-border-b-0;
+
+                                span.header, span.description {
+                                    @apply tw-text-gray-600;
+                                }
+
+                                &:hover {
+                                    @apply tw-text-main-600;
+
+                                    span.header, span.description {
+                                        @apply tw-text-main-600;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
