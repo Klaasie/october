@@ -76,6 +76,16 @@ body {
                 }
             }
         }
+
+        &.has-sidenav-tree {
+            .kb-page {
+                .kb-page-container {
+                    .kb-page-content {
+                        @apply tw-shadow tw-bg-white tw-rounded tw-h-auto tw-w-10/12 tw-m-10 tw-ml-0;
+                    }
+                }
+            }
+        }
     }
 }
 
