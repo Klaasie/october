@@ -35,7 +35,7 @@ class UserRole extends RoleBase
         'users_count' => [User::class, 'key' => 'role_id', 'count' => true]
     ];
 
-    public function filterFields($fields)
+    public function filterFields($fields, $context)
     {
         if ($this->is_system) {
             $fields->code->disabled = true;
