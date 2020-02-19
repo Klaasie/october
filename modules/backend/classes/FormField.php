@@ -189,8 +189,10 @@ class FormField
 
     /**
      * If this field belongs to a tab.
+     * @param $value
+     * @return FormField
      */
-    public function tab($value)
+    public function tab($value): FormField
     {
         $this->tab = $value;
         return $this;
@@ -199,8 +201,9 @@ class FormField
     /**
      * Sets a side of the field on a form.
      * @param string $value Specifies a side. Possible values: left, right, full
+     * @return FormField
      */
-    public function span($value = 'full')
+    public function span($value = 'full'): FormField
     {
         $this->span = $value;
         return $this;
@@ -209,8 +212,9 @@ class FormField
     /**
      * Sets a side of the field on a form.
      * @param string $value Specifies a size. Possible values: tiny, small, large, huge, giant
+     * @return FormField
      */
-    public function size($value = 'large')
+    public function size($value = 'large'): FormField
     {
         $this->size = $value;
         return $this;
@@ -219,7 +223,7 @@ class FormField
     /**
      * Sets field options, for dropdowns, radio lists and checkbox lists.
      * @param  array $value
-     * @return self
+     * @return self|array
      */
     public function options($value = null)
     {
@@ -227,7 +231,8 @@ class FormField
             if (is_array($this->options)) {
                 return $this->options;
             }
-            elseif (is_callable($this->options)) {
+
+            if (is_callable($this->options)) {
                 $callable = $this->options;
                 return $callable();
             }
@@ -251,8 +256,9 @@ class FormField
      * - switch - creates a switch field.
      * @param string $type Specifies a render mode as described above
      * @param array $config A list of render mode specific config.
+     * @return FormField
      */
-    public function displayAs($type, $config = [])
+    public function displayAs($type, $config = []): FormField
     {
         $this->type = strtolower($type) ?: $this->type;
         $this->config = $this->evalConfig($config);
@@ -330,12 +336,7 @@ class FormField
             $this->attributes($config['containerAttributes'], 'container');
         }
 
-        if (isset($config['valueFrom'])) {
-            $this->valueFrom = $config['valueFrom'];
-        }
-        else {
-            $this->valueFrom = $this->fieldName;
-        }
+        $this->valueFrom = $config['valueFrom'] ?? $this->fieldName;
 
         return $config;
     }
@@ -346,8 +347,9 @@ class FormField
      * @param string $position Specifies a comment position.
      * @param bool $isHtml Set to true if you use HTML formatting in the comment
      * Supported values are 'below' and 'above'
+     * @return FormField
      */
-    public function comment($text, $position = 'below', $isHtml = null)
+    public function comment($text, $position = 'below', $isHtml = null): FormField
     {
         $this->comment = $text;
         $this->commentPosition = $position;
@@ -361,10 +363,10 @@ class FormField
 
     /**
      * Determine if the provided value matches this field's value.
-     * @param string $value
+     * @param string|bool $value
      * @return bool
      */
-    public function isSelected($value = true)
+    public function isSelected($value = true): bool
     {
         if ($this->value === null) {
             return false;
@@ -379,7 +381,7 @@ class FormField
      * - container: Attributes are added to the form field container (div.form-group)
      * @param  array $items
      * @param  string $position
-     * @return void
+     * @return void|FormField
      */
     public function attributes($items, $position = 'field')
     {
@@ -406,7 +408,7 @@ class FormField
      * @param  string $position
      * @return bool
      */
-    public function hasAttribute($name, $position = 'field')
+    public function hasAttribute($name, $position = 'field'): bool
     {
         if (!isset($this->attributes[$position])) {
             return false;
@@ -417,8 +419,9 @@ class FormField
 
     /**
      * Returns the attributes for this field at a given position.
-     * @param  string $position
-     * @return array
+     * @param string $position
+     * @param bool $htmlBuild
+     * @return array|string
      */
     public function getAttributes($position = 'field', $htmlBuild = true)
     {
@@ -435,22 +438,22 @@ class FormField
      * @param  string $position
      * @return array
      */
-    protected function filterAttributes($attributes, $position = 'field')
+    protected function filterAttributes($attributes, $position = 'field'): array
     {
         $position = strtolower($position);
 
         $attributes = $this->filterTriggerAttributes($attributes, $position);
         $attributes = $this->filterPresetAttributes($attributes, $position);
 
-        if ($position == 'field' && $this->disabled) {
-            $attributes = $attributes + ['disabled' => 'disabled'];
+        if ($position === 'field' && $this->disabled) {
+            $attributes += ['disabled' => 'disabled'];
         }
 
-        if ($position == 'field' && $this->readOnly) {
-            $attributes = $attributes + ['readonly' => 'readonly'];
+        if ($position === 'field' && $this->readOnly) {
+            $attributes += ['readonly' => 'readonly'];
 
-            if ($this->type == 'checkbox' || $this->type == 'switch') {
-                $attributes = $attributes + ['onclick' => 'return false;'];
+            if ($this->type === 'checkbox' || $this->type === 'switch') {
+                $attributes += ['onclick' => 'return false;'];
             }
         }
 
@@ -463,7 +466,7 @@ class FormField
      * @param  string $position
      * @return array
      */
-    protected function filterTriggerAttributes($attributes, $position = 'field')
+    protected function filterTriggerAttributes($attributes, $position = 'field'): array
     {
         if (!$this->trigger || !is_array($this->trigger)) {
             return $attributes;
@@ -476,12 +479,12 @@ class FormField
         $triggerMulti = '';
 
         // Apply these to container
-        if (in_array($triggerAction, ['hide', 'show']) && $position != 'container') {
+        if ($position !== 'container' && in_array($triggerAction, ['hide', 'show'])) {
             return $attributes;
         }
 
         // Apply these to field/input
-        if (in_array($triggerAction, ['enable', 'disable', 'empty']) && $position != 'field') {
+        if ($position !== 'field' && in_array($triggerAction, ['enable', 'disable', 'empty'])) {
             return $attributes;
         }
 
@@ -523,9 +526,9 @@ class FormField
      * @param  string $position
      * @return array
      */
-    protected function filterPresetAttributes($attributes, $position = 'field')
+    protected function filterPresetAttributes($attributes, $position = 'field'): array
     {
-        if (!$this->preset || $position != 'field') {
+        if (!$this->preset || $position !== 'field') {
             return $attributes;
         }
 
@@ -561,7 +564,7 @@ class FormField
      * @param  string $arrayName Specify a custom array name
      * @return string
      */
-    public function getName($arrayName = null)
+    public function getName($arrayName = null): string
     {
         if ($arrayName === null) {
             $arrayName = $this->arrayName;
@@ -579,7 +582,7 @@ class FormField
      * @param  string $suffix Specify a suffix string
      * @return string
      */
-    public function getId($suffix = null)
+    public function getId($suffix = null): string
     {
         $id = 'field';
         if ($this->arrayName) {
@@ -647,10 +650,11 @@ class FormField
      *
      *     list($model, $attribute) = $this->resolveAttribute('person[phone]');
      *
-     * @param  string $attribute.
+     * @param Model $model
+     * @param string|array $attribute .
      * @return array
      */
-    public function resolveModelAttribute($model, $attribute = null)
+    public function resolveModelAttribute($model, $attribute = null): array
     {
         if ($attribute === null) {
             $attribute = $this->valueFrom ?: $this->fieldName;
